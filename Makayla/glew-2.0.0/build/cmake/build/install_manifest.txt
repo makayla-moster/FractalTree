@@ -1,0 +1,13 @@
+C:/Program Files (x86)/glew/lib/libglew32.dll.a
+C:/Program Files (x86)/glew/bin/glew32.dll
+C:/Program Files (x86)/glew/lib/libglew32.a
+C:/Program Files (x86)/glew/bin/glewinfo.exe
+C:/Program Files (x86)/glew/bin/visualinfo.exe
+C:/Program Files (x86)/glew/lib/pkgconfig/glew.pc
+C:/Program Files (x86)/glew/include/GL/wglew.h
+C:/Program Files (x86)/glew/include/GL/glew.h
+C:/Program Files (x86)/glew/include/GL/glxew.h
+C:/Program Files (x86)/glew/lib/cmake/glew/glew-targets.cmake
+C:/Program Files (x86)/glew/lib/cmake/glew/glew-targets-release.cmake
+C:/Program Files (x86)/glew/lib/cmake/glew/glew-config.cmake
+C:/Program Files (x86)/glew/lib/cmake/glew/CopyImportedTargetProperties.cmake

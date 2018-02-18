@@ -1,0 +1,10 @@
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/install.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/rebuild_cache.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/glew.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/edit_cache.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/glew_s.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/glewinfo.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/list_install_components.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/visualinfo.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/install/strip.dir
+C:/MinGW/msys/1.0/home/Makayla/glew-2.0.0/build/cmake/build/CMakeFiles/install/local.dir
