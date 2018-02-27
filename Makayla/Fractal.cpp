@@ -1,4 +1,3 @@
-
 //g++ -o Makayla.exe Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lOpenGL32 -L ./ -lglew32 -lglfw3
 
 #include <GL/glew.h>		/* include GLEW and new version of GL on Windows */
@@ -8,28 +7,8 @@
 #include <iostream>
 #include <stack>
 #include <vector>
+#include <cstdlib>
 using namespace std;
-
-/*void  multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){ // this is to multiply a 4x4 with another 4x4 
-	//GLfloat* result = new float[16];
-	result[0] = (matrix1[0]*matrix2[0])+(matrix1[4]*matrix2[1])+(matrix1[8]*matrix2[2])+(matrix1[12]*matrix2[3]);
-	result[4] = (matrix1[0]*matrix2[4])+(matrix1[4]*matrix2[5])+(matrix1[8]*matrix2[6])+(matrix1[12]*matrix2[7]);
-	result[8] = (matrix1[0]*matrix2[8])+(matrix1[4]*matrix2[9])+(matrix1[8]*matrix2[10])+(matrix1[12]*matrix2[11]);
-	result[12] = (matrix1[0]*matrix2[12])+(matrix1[4]*matrix2[13])+(matrix1[8]*matrix2[14])+(matrix1[12]*matrix2[15]);
-	result[1] = (matrix1[1]*matrix2[0])+(matrix1[5]*matrix2[1])+(matrix1[9]*matrix2[2])+(matrix1[13]*matrix2[3]);
-	result[5] = (matrix1[1]*matrix2[4])+(matrix1[5]*matrix2[5])+(matrix1[9]*matrix2[6])+(matrix1[13]*matrix2[7]);
-	result[9] = (matrix1[1]*matrix2[8])+(matrix1[5]*matrix2[9])+(matrix1[9]*matrix2[10])+(matrix1[13]*matrix2[11]);
-	result[13] = (matrix1[1]*matrix2[12])+(matrix1[5]*matrix2[13])+(matrix1[9]*matrix2[14])+(matrix1[13]*matrix2[15]);
-	result[2] = (matrix1[2]*matrix2[0])+(matrix1[6]*matrix2[1])+(matrix1[10]*matrix2[2])+(matrix1[14]*matrix2[3]);
-	result[6] = (matrix1[2]*matrix2[4])+(matrix1[6]*matrix2[5])+(matrix1[10]*matrix2[6])+(matrix1[14]*matrix2[7]);
-	result[10] = (matrix1[2]*matrix2[8])+(matrix1[6]*matrix2[9])+(matrix1[10]*matrix2[10])+(matrix1[14]*matrix2[11]);
-	result[14] = (matrix1[2]*matrix2[12])+(matrix1[6]*matrix2[13])+(matrix1[10]*matrix2[14])+(matrix1[14]*matrix2[15]);
-	result[3] = (matrix1[3]*matrix2[0])+(matrix1[7]*matrix2[1])+(matrix1[11]*matrix2[2])+(matrix1[15]*matrix2[3]);
-	result[7] = (matrix1[3]*matrix2[4])+(matrix1[7]*matrix2[5])+(matrix1[11]*matrix2[6])+(matrix1[15]*matrix2[7]);
-	result[11] = (matrix1[3]*matrix2[8])+(matrix1[7]*matrix2[9])+(matrix1[11]*matrix2[10])+(matrix1[15]*matrix2[11]);
-	result[15] = (matrix1[3]*matrix2[12])+(matrix1[7]*matrix2[13])+(matrix1[11]*matrix2[14])+(matrix1[15]*matrix2[15]);
-	//return result;
-} */
 
 void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this is to multiply a 4x4 and a 4x1 matrix together
 	result[0] = (matrix1[0]*matrix2[0]) + (matrix1[4]*matrix2[1]) + (matrix1[8]*matrix2[2]) + (matrix1[12]*matrix2[3]);
@@ -39,7 +18,7 @@ void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this
 }
 
 string generatePattern(){
-    int numIts = 5; // Number of iterations
+    int numIts = 3; // Number of iterations
     string pattern = "F"; //"[X]";    // Using F for the pattern 
     
     for (int i = 0; i < numIts; i++){
@@ -47,7 +26,7 @@ string generatePattern(){
         for (int idx = 0; idx < pattern.length(); idx++){
             //cout << "char: " << pattern.substr(idx,1) << endl;
             if (pattern.substr(idx,1).compare("F") == 0) 
-                newPattern += "F[-F][F][+F]"; 
+			newPattern += "F[F][-F][+F]";   //"F[-F][F][+F]"
             else if (pattern.substr(idx,1).compare("X") == 0) 
                 newPattern += "F-[[X]+X]+F[+FX]-X";
             else{
@@ -60,40 +39,34 @@ string generatePattern(){
     return pattern;    
 }
 
-int main() {
-	
-	//GLfloat matrix1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-	//GLfloat matrix2[] = {2, 3, 4, 5};
-	//GLfloat* result = new float[4];
-	//multiply(matrix1, matrix2, result);
-	//cout << matrix1[14] << " " << matrix2[3] << " " << result[2] << endl;
-	/* string topofStack;
-	stack<string> mystack;
-	mystack.push("H");
-	mystack.push("W");
-	topofStack = mystack.top();
-	mystack.pop();
-	cout << topofStack << endl; */
-	 
+int main() {	 
 	GLFWwindow *window = NULL;
 	const GLubyte *renderer;
 	const GLubyte *version;
 	GLuint vao;
 	GLuint vbo;
 	
+	int rotation;
 	int count = 1;
+	int countBracket = 1;
 	string pattern = generatePattern();
-	cout << "pattern: " << pattern << endl;
-	cout << endl;
+	//cout << "pattern: " << pattern << endl;
+	//cout << endl;
 	for (int idx = 0; idx < pattern.length(); idx++){
 			if (pattern.substr(idx, 1).compare("F") == 0){
 				count ++;
 				//cout << "F" << endl;
 			}
+			else if (pattern.substr(idx, 1).compare("]") == 0){
+				countBracket ++;
+				//cout << "]" << endl;
+			}
 		}
-		
-	GLfloat points[count*3];
-	cout << count << endl; 	
+	//cout << "Bracket " << countBracket << endl << endl;
+	int totalCount = count + countBracket;
+	GLfloat points[totalCount*3]; // + countBracket*3];
+	//cout << "Count F " << count << endl << endl;
+	//cout << "Count " << count*3 << " Brackets " << countBracket*3 << " Points Length " << count*3 + countBracket*3 << endl << endl;
 	GLfloat* result = new float[4];
 	stack<float> PositionStack;
 	stack<float> HeadingStack;
@@ -108,42 +81,43 @@ int main() {
 		0,0,0,1};
 
 	points[pointsCount] = currentPosition[0];
-	cout << "Points 1: " << points[pointsCount] << endl;
+	//cout << "Points 1: " << points[pointsCount] << endl;
 	pointsCount++;
 	points[pointsCount] = currentPosition[1];
-	cout << "Points 2: " << points[pointsCount] << endl;
+	//cout << "Points 2: " << points[pointsCount] << endl;
 	pointsCount++;
 	points[pointsCount] = currentPosition[2];
-	cout << "Points 3: " << points[pointsCount] << endl;
+	//cout << "Points 3: " << points[pointsCount] << endl;
 	pointsCount++;
 	//points[pointsCount] = currentPosition[3];
 	//cout << "Points 4: " << points[pointsCount] << endl;
 	//pointsCount++;
-	cout << endl;
+	//cout << endl;
 	
 	for (int idx = 0; idx < pattern.length(); idx++){
 		
+		//cout << "STRING: " << pattern.substr(idx, 1) << endl << endl;
 		
 		if (pattern.substr(idx,1).compare("[") == 0){
-			cout << "Printing currentPosition before push " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
+			//cout << "Printing currentPosition before push " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
 			PositionStack.push(currentPosition[3]);
 			PositionStack.push(currentPosition[2]);
 			PositionStack.push(currentPosition[1]);
 			PositionStack.push(currentPosition[0]);
-			cout << "Printing currentPosition after push " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
-			cout << endl;
+			//cout << "Printing currentPosition after push " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
+			//cout << endl;
 			
-			cout << "Printing currentHeading before push " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
+			//cout << "Printing currentHeading before push " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
 			HeadingStack.push(currentHeading[3]);
 			HeadingStack.push(currentHeading[2]);
 			HeadingStack.push(currentHeading[1]);
 			HeadingStack.push(currentHeading[0]);
-			cout << "Printing currentHeading after push " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			cout << endl;
+			//cout << "Printing currentHeading after push " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
+			//cout << endl;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("]") == 0){
-			cout << "Printing currentPosition before pop " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
+			//cout << "Printing currentPosition before pop " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
 			currentPosition[0] = PositionStack.top();
 			PositionStack.pop();
 			currentPosition[1] = PositionStack.top();
@@ -152,10 +126,24 @@ int main() {
 			PositionStack.pop();
 			currentPosition[3] = PositionStack.top();
 			PositionStack.pop();
-			cout << "Printing currentPosition after pop " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
-			cout << endl;
+			//cout << "Printing currentPosition after pop " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
+			//cout << endl;
 			
-			cout << "Printing currentHeading before pop " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;			
+			points[pointsCount] = currentPosition[0];
+			//cout << "Points 1: " << points[pointsCount] << endl;
+			pointsCount++;
+			points[pointsCount] = currentPosition[1];
+			//cout << "Points 2: " << points[pointsCount] << endl;
+			pointsCount++;
+			points[pointsCount] = currentPosition[2];
+			//cout << "Points 3: " << points[pointsCount] << endl;
+			pointsCount++;
+			//points[pointsCount] = currentPosition[3];
+			//cout << "Points 4: " << points[pointsCount] << endl;
+			//pointsCount++;
+			//cout << endl; 
+			
+			//cout << "Printing currentHeading before pop " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;			
 			currentHeading[0] = HeadingStack.top();
 			HeadingStack.pop();
 			currentHeading[1] = HeadingStack.top();
@@ -164,75 +152,77 @@ int main() {
 			HeadingStack.pop();
 			currentHeading[3] = HeadingStack.top();
 			HeadingStack.pop();
-			cout << "Printing currentHeading after pop " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			cout << endl;
+			//cout << "Printing currentHeading after pop " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
+			//cout << endl;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("F") == 0){
 			
-			cout << " F before adding" << endl;
-			cout << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
+			//cout << " F before adding" << endl;
+			//cout << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
 			
 			currentPosition[0] += currentHeading[0]*.2;
 			currentPosition[1] += currentHeading[1]*.2;
 			currentPosition[2] += currentHeading[2]*.2;
 			currentPosition[3] += currentHeading[3];
 			
-			cout << " F after adding" << endl;
-			cout << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
-			cout << endl;
+			//cout << " F after adding" << endl;
+			//cout << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
+			//cout << endl;
 			
 			points[pointsCount] = currentPosition[0];
-			cout << "Points 1: " << points[pointsCount] << endl;
+			//cout << "Points 1: " << points[pointsCount] << endl;
 			pointsCount++;
 			points[pointsCount] = currentPosition[1];
-			cout << "Points 2: " << points[pointsCount] << endl;
+			//cout << "Points 2: " << points[pointsCount] << endl;
 			pointsCount++;
 			points[pointsCount] = currentPosition[2];
-			cout << "Points 3: " << points[pointsCount] << endl;
+			//cout << "Points 3: " << points[pointsCount] << endl;
 			pointsCount++;
 			//points[pointsCount] = currentPosition[3];
 			//cout << "Points 4: " << points[pointsCount] << endl;
 			//pointsCount++;
-			cout << endl;
+			//cout << endl;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("+") == 0){
-			cout <<  "+ rz before " << rz << endl;
-			float rz =-  ((30 * 3.14159) / 180);
+			//cout <<  "+ rz before " << rz << endl;
+			rotation = rand() % 65 + 1;
+			float rz =-  ((rotation * 3.14159) / 180);
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
 			rotateZ[4] = -sin(rz);
 			rotateZ[5] = cos(rz);
-			cout <<  "+ rz after " << rz << endl;
-			cout << endl;
+			//cout <<  "+ rz after " << rz << endl;
+			//cout << endl;
 			multiply(rotateZ, currentHeading, result);
 			float magnitude = sqrt((result[0]*result[0]) + (result[1]*result[1]) + (result[2]*result[2]) + (result[3]*result[3]));
 			currentHeading[0] = result[0] / magnitude;
 			currentHeading[1] = result[1] / magnitude;
 			currentHeading[2] = result[2] / magnitude;
 			currentHeading[3] = result[3] / magnitude;
-			cout << "Current Heading after Normalization: " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			cout << endl;
+			//cout << "Current Heading after Normalization: " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
+			//cout << endl;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("-") == 0){
-			cout <<  "- rz before " << rz << endl;
-			float rz =+ ((30 * 3.14159) / 180);
+			//cout <<  "- rz before " << rz << endl;
+			rotation = rand() % 65 + 1;
+			float rz =+ ((rotation * 3.14159) / 180);
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
 			rotateZ[4] = -sin(rz);
 			rotateZ[5] = cos(rz);
-			cout <<  "- rz after " << rz << endl;
-			cout << endl;
+			//cout <<  "- rz after " << rz << endl;
+			//cout << endl;
 			multiply(rotateZ, currentHeading, result);	
 			float magnitude = sqrt((result[0]*result[0]) + (result[1]*result[1]) + (result[2]*result[2]) + (result[3]*result[3]));
 			currentHeading[0] = result[0] / magnitude;
 			currentHeading[1] = result[1] / magnitude;
 			currentHeading[2] = result[2] / magnitude;
 			currentHeading[3] = result[3] / magnitude;
-			cout << "Current Heading after Normalization: " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			cout << endl;
+			//cout << "Current Heading after Normalization: " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
+			//cout << endl;
 		}
 	}
 
@@ -290,7 +280,7 @@ int main() {
 	data on the graphics adapter's memory. in our case - the vertex points */
 	glGenBuffers( 1, &vbo );
 	glBindBuffer( GL_ARRAY_BUFFER, vbo );
-	glBufferData( GL_ARRAY_BUFFER, (count*3) * sizeof( GLfloat ), points, GL_STATIC_DRAW ); // count*3 to not lose points
+	glBufferData( GL_ARRAY_BUFFER, (totalCount*3) * sizeof( GLfloat ), points, GL_STATIC_DRAW ); // count*3 to not lose points 
 
 	/* the vertex array object (VAO) is a little descriptor that defines which
 	data from vertex buffer objects should be used as input variables to vertex
@@ -322,7 +312,7 @@ int main() {
 	glAttachShader( shader_programme, frag_shader );
 	glAttachShader( shader_programme, vert_shader );
 	glLinkProgram( shader_programme );
-	glPointSize(2.0);
+	glPointSize(5.0);
 
 	/* this loop clears the drawing surface, then draws the geometry described
 			by the VAO onto the drawing surface. we 'poll events' to see if the window
@@ -337,7 +327,7 @@ int main() {
 		glUseProgram( shader_programme );
 		glBindVertexArray( vao );
 		/* draw points 0-3 from the currently bound VAO with current in-use shader */
-		glDrawArrays( GL_LINES , 0, count);
+		glDrawArrays(GL_LINES , 0, totalCount);
 		/* update other events like input handling */
 		glfwPollEvents();
 		/* put the stuff we've been drawing onto the display */
