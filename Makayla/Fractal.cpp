@@ -236,7 +236,8 @@ void loadFaces(string modelName, GLint faces[]){    			//To read in Maya OBJ fil
 }
 
 
-int main() {	 
+int main() {	
+ 
 	GLFWwindow *window = NULL;
 	const GLubyte *renderer;
 	const GLubyte *version;
@@ -274,6 +275,9 @@ int main() {
 	float rz = (90 * 3.14159) / 180;								//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
 	int pointsCount = 0;
 	int leafCount = 0;
+	GLfloat sx = 1;
+	GLfloat sy = 1;
+	GLfloat sz = 1;
 	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};
 	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};
 	GLfloat rotateZ[] = 
@@ -281,6 +285,11 @@ int main() {
 		-sin(rz),cos(rz),0,0,
 		0,0,1,0,
 		0,0,0,1};
+	GLfloat scale[] =
+		{sx,0,0,0,
+		 0,sy,0,0,
+		 0,0,sz,0,
+		 0,0,0,1};
 
 	branchPoints[pointsCount] = currentPosition[0];					//These lines add the first set of points to the list of points.
 	//cout << "Points 1: " << branchPoints[pointsCount] << endl;
@@ -482,7 +491,6 @@ int main() {
 	}
 	int numPoints = 3*numFaces;
 	
-	
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
 	const char *vertex_shader = "#version 410\n"
@@ -515,7 +523,7 @@ int main() {
 	const char *fragment_shader2 = "#version 410\n"
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.80, 0.5215, 0.247, 1.0);"
+		"  frag_colour = vec4 (0.0, 1.0, 0.0, 1.0);"
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
@@ -600,29 +608,29 @@ int main() {
 	then create an executable shader 'program' and attach both of the compiled
 	shaders. we link this, which matches the outputs of the vertex shader to
 	the inputs of the fragment shader, etc. and it is then ready to use */
-	vert_shader = glCreateShader( GL_VERTEX_SHADER );
-	glShaderSource( vert_shader, 1, &vertex_shader, NULL );
-	glCompileShader( vert_shader );
-	frag_shader = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( frag_shader, 1, &fragment_shader, NULL );
-	glCompileShader( frag_shader );
+	vert_shader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vert_shader, 1, &vertex_shader, NULL);
+	glCompileShader(vert_shader);
+	frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(frag_shader, 1, &fragment_shader, NULL);
+	glCompileShader(frag_shader);
 	shader_programme = glCreateProgram();
-	glAttachShader( shader_programme, frag_shader );
-	glAttachShader( shader_programme, vert_shader );
-	glLinkProgram( shader_programme );
+	glAttachShader(shader_programme, frag_shader);
+	glAttachShader(shader_programme, vert_shader);
+	glLinkProgram(shader_programme);
 	glPointSize(5.0);
 	
 	//------------------------------------------------------------------------------------
-	vert_shader2 = glCreateShader( GL_VERTEX_SHADER );
-	glShaderSource( vert_shader2, 1, &vertex_shader2, NULL );
-	glCompileShader( vert_shader2 );
-	frag_shader = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( frag_shader2, 1, &fragment_shader2, NULL );
-	glCompileShader( frag_shader2 );
+	vert_shader2 = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vert_shader2, 1, &vertex_shader2, NULL);
+	glCompileShader(vert_shader2);
+	frag_shader2 = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(frag_shader2, 1, &fragment_shader2, NULL);
+	glCompileShader(frag_shader2);
 	shader_programme2 = glCreateProgram();
-	glAttachShader( shader_programme2, frag_shader2 );
-	glAttachShader( shader_programme2, vert_shader2 );
-	glLinkProgram( shader_programme2 );
+	glAttachShader(shader_programme2, frag_shader2);
+	glAttachShader(shader_programme2, vert_shader2);
+	glLinkProgram(shader_programme2);
 	//------------------------------------------------------------------------------------
 
 	/* this loop clears the drawing surface, then draws the geometry described
@@ -634,15 +642,15 @@ int main() {
 			stuff being drawn one-after-the-other */
 	while ( !glfwWindowShouldClose( window ) ) {
 		/* wipe the drawing surface clear */
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		glUseProgram( shader_programme );
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(shader_programme);
 		glBindVertexArray(vao);
 		/* draw points 0-3 from the currently bound VAO with current in-use shader */
 		glDrawArrays(GL_LINES, 0, totalCount);
 	//------------------------------------------------------------------------------------	
 		glUseProgram(shader_programme2);
 		glBindVertexArray(vao2);
-		//glDrawArrays(GL_TRIANGLES, 0, numPoints);
+		glDrawArrays(GL_TRIANGLES, 0, numPoints);
 	//------------------------------------------------------------------------------------
 		
 		/* update other events like input handling */
