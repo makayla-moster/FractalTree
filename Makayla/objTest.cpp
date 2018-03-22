@@ -213,7 +213,23 @@ int main(){
 	const GLubyte *version;
 	GLuint vao;
 	GLuint vbo;
-	
+	float rz = (90 * 3.14159) / 180;	//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
+	float rx = (50 * 3.14159) / 180;
+	GLfloat rotateZ[] = 
+		{cos(rz),sin(rz),0,0,
+		-sin(rz),cos(rz),0,0,
+		0,0,1,0,
+		0,0,0,1};
+	//GLfloat scale[] =
+	//	{sx,0,0,0,
+	//	 0,sy,0,0,
+	//	 0,0,sz,0,
+	//	 0,0,0,1};
+	GLfloat rotateX[] = 
+		{1,0,0,0,
+		 0,cos(rx),-sin(rx),0,
+		 0,sin(rx),cos(rx),0,
+		 0,0,0,1};
 	
 	string modelName = "Leaf.obj";								//Name of the OBJ to load.
 	
@@ -262,8 +278,9 @@ int main(){
 	the vertex shader positions each vertex point */
 	const char *vertex_shader2 = "#version 410\n"
 		"in vec3 vp;"
+		"uniform mat4 rotateX;"
 		"void main () {"
-		"  gl_Position = vec4 (vp, 1.0);"
+		"  gl_Position = rotateX * vec4 (vp, 1.0);"
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */

@@ -264,15 +264,13 @@ int main() {
 	int totalCount = count + countBracket;							//Total amount of points, including the backtracking points that are added for the lines.
 	GLfloat branchPoints[totalCount*3]; 							//List of points to make the branches. Includes extra points for lines.
 	GLfloat leafPoints[countBracket*3];								//List of points to place the leaves - only on the ends of branches though.
-	//cout << countBracket*3 << endl;
-	/*cout << "Count F " << count << endl << endl;
-	cout << "Count " << count*3 << " Brackets " 
-	<< countBracket*3 << " Points Length " << count*3 + 
-	countBracket*3 << endl << endl;*/
-	GLfloat* result = new float[4];									//This is a new 4x1 matrix to acquire the new heading.							
+	GLfloat* result = new float[4];									//This is a new 4x1 matrix to acquire the new heading.	
+	GLfloat* result2 = new float[4];
 	stack<float> PositionStack;
 	stack<float> HeadingStack;
-	float rz = (90 * 3.14159) / 180;								//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
+	float rz = (90 * 3.14159) / 180;	//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
+	float rx = (0 * 3.14159) / 180;
+	float ry = (90 * 3.14159) / 180;
 	int pointsCount = 0;
 	int leafCount = 0;
 	GLfloat sx = 1;
@@ -290,6 +288,16 @@ int main() {
 		 0,sy,0,0,
 		 0,0,sz,0,
 		 0,0,0,1};
+	GLfloat rotateX[] = 
+		{1,0,0,0,
+		 0,cos(rx),-sin(rx),0,
+		 0,sin(rx),cos(rx),0,
+		 0,0,0,1};
+	GLfloat rotateY[] = 
+		{cos(ry),0,sin(ry),0,
+		0,1,0,0,
+		-sin(ry),0,cos(ry),0,
+		0,0,0,1};
 
 	branchPoints[pointsCount] = currentPosition[0];					//These lines add the first set of points to the list of points.
 	//cout << "Points 1: " << branchPoints[pointsCount] << endl;
@@ -494,7 +502,7 @@ int main() {
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
 	const char *vertex_shader = "#version 410\n"
-		"in vec3 vp;"
+		"attribute vec3 vp;"
 		"void main () {"
 		"  gl_Position = vec4 (vp, 1.0);"
 		"}";
@@ -514,16 +522,17 @@ int main() {
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
 	const char *vertex_shader2 = "#version 410\n"
-		"in vec3 vp;"
+		"attribute vec3 vp;"
+		"uniform mat4 rotateX;"
 		"void main () {"
-		"  gl_Position = vec4 (vp, 1.0);"
+		"  gl_Position = rotateX * vec4 (vp, 1.0);"
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
 	const char *fragment_shader2 = "#version 410\n"
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.0, 1.0, 0.0, 1.0);"
+		"  frag_colour = vec4 (0.0, 1.0, 0.5, 1.0);"
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
