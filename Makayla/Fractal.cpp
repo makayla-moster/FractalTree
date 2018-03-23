@@ -183,30 +183,6 @@ void computeVertNormals(GLfloat normals[], GLfloat verts[], int numVerts, GLint 
 	}
 }
 
-/* void loadFaces(string modelName, GLint faces[]){	
-	//cout << "Loading faces\n";
-	int numFaces = 0;
-
-	FILE *objFile;
-	objFile = fopen(modelName.c_str(),"r");
-
-	char buf[128];
-	char label[] = "f";
-	GLfloat a, b, c;
-	while (fscanf(objFile, "%s", &buf) != EOF){ 
-	    if (strcmp(buf,label) == 0){
-		fscanf(objFile, "%f %f %f\n", &a, &b, &c);
-		faces[3*numFaces + 0] = a-1;
-		faces[3*numFaces + 1] = b-1;
-		faces[3*numFaces + 2] = c-1;
-		numFaces++;
-	    }
-	}
-
-	fclose(objFile);
-	//cout << "Done loading faces\n";
-} */
-
 void loadFaces(string modelName, GLint faces[]){    			//To read in Maya OBJ files.
     cout << "Loading new faces\n";
 
@@ -269,13 +245,13 @@ int main() {
 	stack<float> PositionStack;
 	stack<float> HeadingStack;
 	float rz = (90 * 3.14159) / 180;	//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
-	float rx = (0 * 3.14159) / 180;
+	float rx = (-90 * 3.14159) / 180;
 	float ry = (90 * 3.14159) / 180;
 	int pointsCount = 0;
 	int leafCount = 0;
-	GLfloat sx = 1;
-	GLfloat sy = 1;
-	GLfloat sz = 1;
+	GLfloat sx = .025;
+	GLfloat sy = .035;
+	GLfloat sz = .045;
 	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};
 	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};
 	GLfloat rotateZ[] = 
@@ -292,12 +268,13 @@ int main() {
 		{1,0,0,0,
 		 0,cos(rx),-sin(rx),0,
 		 0,sin(rx),cos(rx),0,
-		 0,0,0,1};
+		 0,0,0,1}; 
+		
 	GLfloat rotateY[] = 
 		{cos(ry),0,sin(ry),0,
-		0,1,0,0,
-		-sin(ry),0,cos(ry),0,
-		0,0,0,1};
+		 0,1,0,0,
+		 -sin(ry),0,cos(ry),0,
+		 0,0,0,1};
 
 	branchPoints[pointsCount] = currentPosition[0];					//These lines add the first set of points to the list of points.
 	//cout << "Points 1: " << branchPoints[pointsCount] << endl;
@@ -518,21 +495,21 @@ int main() {
 	/* GL shader program object [combined, to link] */
 	GLuint shader_programme;
 	
-	//-----------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------  Leaf Stuff
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
 	const char *vertex_shader2 = "#version 410\n"
 		"attribute vec3 vp;"
-		"uniform mat4 rotateX;"
+		"uniform mat4 rotateX, scale;"
 		"void main () {"
-		"  gl_Position = rotateX * vec4 (vp, 1.0);"
+		"  gl_Position =  rotateX * scale * vec4 (vp, 1.0);"
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
 	const char *fragment_shader2 = "#version 410\n"
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.0, 1.0, 0.5, 1.0);"
+		"  frag_colour = vec4 (0.1333, 0.545, 0.5, 0.1333);"
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
@@ -591,7 +568,7 @@ int main() {
 	// float (i.e. make me vec3s)"
 	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
 	
-	//----------------------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------------------  Leaf Stuff
 	GLuint points_vbo;
 	glGenBuffers (1, &points_vbo);
 	glBindBuffer (GL_ARRAY_BUFFER, points_vbo);
@@ -629,7 +606,7 @@ int main() {
 	glLinkProgram(shader_programme);
 	glPointSize(5.0);
 	
-	//------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------  Leaf stuff
 	vert_shader2 = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vert_shader2, 1, &vertex_shader2, NULL);
 	glCompileShader(vert_shader2);
@@ -656,8 +633,14 @@ int main() {
 		glBindVertexArray(vao);
 		/* draw points 0-3 from the currently bound VAO with current in-use shader */
 		glDrawArrays(GL_LINES, 0, totalCount);
-	//------------------------------------------------------------------------------------	
+	//------------------------------------------------------------------------------------	Leaf stuff
+		int Xrotation = glGetUniformLocation (shader_programme2, "rotateX");
 		glUseProgram(shader_programme2);
+		glUniformMatrix4fv (Xrotation, 1, GL_FALSE, rotateX);
+		int scaleLeaf = glGetUniformLocation (shader_programme2, "scale");
+		glUseProgram(shader_programme2);
+		glUniformMatrix4fv (scaleLeaf, 1, GL_FALSE, scale);
+		
 		glBindVertexArray(vao2);
 		glDrawArrays(GL_TRIANGLES, 0, numPoints);
 	//------------------------------------------------------------------------------------
