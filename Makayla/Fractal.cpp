@@ -17,6 +17,7 @@
 #include <stdarg.h>   
 using namespace std;
 
+
 void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this is to multiply a 4x4 and a 4x1 matrix together
 	result[0] = (matrix1[0]*matrix2[0]) + (matrix1[4]*matrix2[1]) + (matrix1[8]*matrix2[2]) + (matrix1[12]*matrix2[3]);
 	result[1] = (matrix1[1]*matrix2[0]) + (matrix1[5]*matrix2[1]) + (matrix1[9]*matrix2[2]) + (matrix1[13]*matrix2[3]);
@@ -24,7 +25,7 @@ void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this
 	result[3] = (matrix1[3]*matrix2[0]) + (matrix1[7]*matrix2[1]) + (matrix1[11]*matrix2[2]) + (matrix1[15]*matrix2[3]);
 }
 
-void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
+void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){ // this is to multiply a 4x4 and a 4x4 matrix together
 	//GLfloat* result = new float[16];
 	result[0] = (matrix1[0]*matrix2[0])+(matrix1[4]*matrix2[1])+(matrix1[8]*matrix2[2])+(matrix1[12]*matrix2[3]);
 	result[4] = (matrix1[0]*matrix2[4])+(matrix1[4]*matrix2[5])+(matrix1[8]*matrix2[6])+(matrix1[12]*matrix2[7]);
@@ -165,8 +166,6 @@ void computeFaceNormals(GLfloat faceNormals[], GLfloat verts[], GLint faces[], i
 	
 }
 
-
-
 void computeVertNormals(GLfloat normals[], GLfloat verts[], int numVerts, GLint faces[], int numFaces, GLfloat faceNormals[]){
 	for (int i = 0; i < numVerts; i++){
 		float avgX = 0.0;
@@ -197,7 +196,7 @@ void computeVertNormals(GLfloat normals[], GLfloat verts[], int numVerts, GLint 
 	}
 }
 
-void loadFaces(string modelName, GLint faces[]){    			//To read in Maya OBJ files.
+void loadFaces(string modelName, GLint faces[]){    					//To read in Maya OBJ files.
     cout << "Loading new faces\n";
 
     FILE *objFile;
@@ -231,11 +230,11 @@ int main() {
 	
 	GLfloat* resultAgain = new float[16];
 	
-	int rotation;
-	int count = 1;
-	int countBracket = 1;
-	string pattern = generatePattern();
-	for (int idx = 0; idx < pattern.length(); idx++){
+	int rotation;													// Rotation of branches.
+	int count = 1;													// Counts number of 'F' in string.
+	int countBracket = 1;											// Counts number of ']' in string.
+	string pattern = generatePattern();								// Generates string pattern to make tree from.
+	for (int idx = 0; idx < pattern.length(); idx++){				// Loops through string pattern to find number of 'F' and ']'.
 			if (pattern.substr(idx, 1).compare("F") == 0){
 				count ++;
 			}
@@ -247,34 +246,33 @@ int main() {
 	GLfloat branchPoints[totalCount*3]; 							//List of points to make the branches. Includes extra points for lines.
 	GLfloat leafPoints[countBracket*3];								//List of points to place the leaves - only on the ends of branches though.
 	GLfloat* result = new float[4];									//This is a new 4x1 matrix to acquire the new heading.	
-	GLfloat* result2 = new float[4];
-	stack<float> PositionStack;
-	stack<float> HeadingStack;
-	float rz = (90 * 3.14159) / 180;	//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
-	float rz2 = (-30 * 3.14159) / 180;
-	float rx = (-90 * 3.14159) / 180;	//Rotates the leaf OBJ to be upright in radians.
-	float ry = (0 * 3.14159) / 180;
-	GLfloat dx;
-	GLfloat dy;
-	GLfloat dz;
-	int pointsCount = 0;
-	int leafCount = 0;
-	GLfloat sx = .25;					//Scales the leaf.
-	GLfloat sy = .35;					//Scales the leaf.
-	GLfloat sz = .45;					//Scales the leaf.
-	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};
-	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};
-	GLfloat rotateZ[] = 				//Rotation matrix for the z-axis.
+	stack<float> PositionStack;										//Stack to put branch point positions on.
+	stack<float> HeadingStack;										//Stack to put branch headings on.
+	float rz = (90 * 3.14159) / 180;								//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
+	float rz2 = (-30 * 3.14159) / 180;								//For rotation of leaf.
+	float rx = (-90 * 3.14159) / 180;								//Rotates the leaf OBJ to be upright in radians.
+	float ry = (0 * 3.14159) / 180;									//Rotates the leaf along the y-axis.
+	GLfloat dx;														//For leaf translation along the x-axis.
+	GLfloat dy;														//For leaf translation along the y-axis.
+	GLfloat dz;														//For leaf translation along the z-axis.
+	int pointsCount = 0;											//Counts number of points needed to make a matrix of points.
+	int leafCount = 0;												//Counts number of points needed to make a matrix for leaves.
+	GLfloat sx = .25;												//Scales the leaf.
+	GLfloat sy = .35;												//Scales the leaf.
+	GLfloat sz = .45;												//Scales the leaf.
+	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};			//Beginning current position of the tree.
+	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};			//Beginning current heading of the tree.
+	GLfloat rotateZ[] = 											//Rotation matrix for the z-axis.
 		{cos(rz),sin(rz),0,0,
 		-sin(rz),cos(rz),0,0,
 		0,0,1,0,
 		0,0,0,1};
-	GLfloat rotateZ2[] = 				//Rotation matrix for the z-axis.
+	GLfloat rotateZ2[] = 											//Rotation matrix for the z-axis.
 		{cos(rz2),sin(rz2),0,0,
 		-sin(rz2),cos(rz2),0,0,
 		0,0,1,0,
 		0,0,0,1};
-	GLfloat scale[] =					//Scale matrix.
+	GLfloat scale[] =												//Scale matrix.
 		{sx,0,0,0,
 		 0,sy,0,0,
 		 0,0,sz,0,
@@ -289,9 +287,9 @@ int main() {
 		 0,1,0,0,
 		 -sin(ry),0,cos(ry),0,
 		 0,0,0,1};
-	dx = 5;
-	dy = 5;
-	dz = 0;
+	dx = 5;															//Translates leaf along the x-axis.
+	dy = 5;															//Translates leaf along the y-axis.
+	dz = 0;															//Translates leaf along the z-axis.
 	GLfloat translate[] =											//Translation matrix.
 		{1,0,0,dx,
 		 0,1,0,dy,
@@ -306,7 +304,7 @@ int main() {
 	branchPoints[pointsCount] = currentPosition[2];
 	pointsCount++;
 	
-	for (int idx = 0; idx < pattern.length(); idx++){		
+	for (int idx = 0; idx < pattern.length(); idx++){				//Parser to parse through the Tree String.
 		if (pattern.substr(idx,1).compare("[") == 0){
 			PositionStack.push(currentPosition[3]);					//Pushes the currentPosition onto the PositionStack.
 			PositionStack.push(currentPosition[2]);
@@ -370,51 +368,51 @@ int main() {
 		}
 		
 		else if (pattern.substr(idx, 1).compare("+") == 0){
-			rotation = rand() % 65 + 1;							//Chooses a random number to rotate by from 0 to 65.
-			float rz =-  ((rotation * 3.14159) / 180);			//Converts degrees of the rotation to radians.
+			rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
+			float rz =-  ((rotation * 3.14159) / 180);				//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
 			rotateZ[4] = -sin(rz);
 			rotateZ[5] = cos(rz);
-			multiply(rotateZ, currentHeading, result);		//Multiplies the rotateZ matrix by the currentHeading to get the new currentHeading.
+			multiply(rotateZ, currentHeading, result);				//Multiplies the rotateZ matrix by the currentHeading to get the new currentHeading.
 			float magnitude = sqrt((result[0]*result[0]) + (result[1]*result[1]) + (result[2]*result[2]) + (result[3]*result[3]));	//Finds magnitude for normalization of heading.
-			currentHeading[0] = result[0] / magnitude;		//Normalizes the currentHeading vector.
+			currentHeading[0] = result[0] / magnitude;				//Normalizes the currentHeading vector.
 			currentHeading[1] = result[1] / magnitude;
 			currentHeading[2] = result[2] / magnitude;
 			currentHeading[3] = result[3] / magnitude;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("-") == 0){
-			rotation = rand() % 65 + 1;							//Chooses a random number to rotate by from 0 to 65.
-			float rz =+ ((rotation * 3.14159) / 180);			//Converts degrees of the rotation to radians.
+			rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
+			float rz =+ ((rotation * 3.14159) / 180);				//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
 			rotateZ[4] = -sin(rz);
 			rotateZ[5] = cos(rz);
-			multiply(rotateZ, currentHeading, result);			//Multiplies the rotateZ matrix by the currentHeading to get the new currentHeading.
+			multiply(rotateZ, currentHeading, result);				//Multiplies the rotateZ matrix by the currentHeading to get the new currentHeading.
 			float magnitude = sqrt((result[0]*result[0]) + (result[1]*result[1]) + (result[2]*result[2]) + (result[3]*result[3]));	//Finds magnitude for normalization of heading.
-			currentHeading[0] = result[0] / magnitude;			//Normalizes the currentHeading vector.
+			currentHeading[0] = result[0] / magnitude;				//Normalizes the currentHeading vector.
 			currentHeading[1] = result[1] / magnitude;
 			currentHeading[2] = result[2] / magnitude;
 			currentHeading[3] = result[3] / magnitude;
 		}
 	}
 
-	string modelName = "Leaf.obj";								//Name of the OBJ to load.
+	string modelName = "Leaf.obj";									//Name of the OBJ to load.
 	
-	int numVert = countLabel(modelName, "v");
+	int numVert = countLabel(modelName, "v");						// Counts the number of vertices.
 	GLfloat* verts = new GLfloat[3*numVert];
-	loadVertices(modelName, verts);
+	loadVertices(modelName, verts);									// Loads vertices.
 	
-	int numFaces = countLabel(modelName, "f");
+	int numFaces = countLabel(modelName, "f");						// Counts the number of faces.
 	GLint* faces = new GLint[3*numFaces];
-	loadFaces(modelName, faces);
+	loadFaces(modelName, faces);									// Loads faces.
 	
 	GLfloat* faceNormals = new GLfloat[3*numFaces];
-	computeFaceNormals(faceNormals, verts, faces, numFaces);
+	computeFaceNormals(faceNormals, verts, faces, numFaces);		// Computes the number of face normals in OBJ.
 	
 	GLfloat* vertNormals = new GLfloat[3*numVert];
-	computeVertNormals(vertNormals, verts, numVert, faces, numFaces, faceNormals);
+	computeVertNormals(vertNormals, verts, numVert, faces, numFaces, faceNormals);	// Computes the number of vertex normals in OBJ.
 	
 	GLfloat* points = new GLfloat[9*numFaces];
 	GLfloat* normals = new GLfloat[9*numFaces];
@@ -443,23 +441,23 @@ int main() {
 	}
 	int numPoints = 3*numFaces;
 	
-	multiplyAgain(translate, scale, resultAgain);
+	multiplyAgain(translate, scale, resultAgain);						// Testing whether multiply will work
 	cout << resultAgain[10] << endl;
 	
 	
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
-	const char *vertex_shader = "#version 410\n"
+	const char *vertex_shader = "#version 410\n"						// Vertex Shader for tree.
 		"attribute vec3 vp;"
 		"void main () {"
-		"  gl_Position = vec4 (vp, 1.0);"
+		"  gl_Position = vec4 (vp, 1.0);"								// Tree position.
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
-	const char *fragment_shader = "#version 410\n"
+	const char *fragment_shader = "#version 410\n"						// Fragment Shader for tree.
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.545, 0.27, 0.074, 1.0);"    //0.80, 0.5215, 0.247, 1.0
+		"  frag_colour = vec4 (0.545, 0.27, 0.074, 1.0);"    //0.80, 0.5215, 0.247, 1.0 Makes tree brown.
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader, frag_shader;
@@ -470,18 +468,18 @@ int main() {
 	//rotateX * rotateZ2 * scale * 
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
-	const char *vertex_shader2 = "#version 410\n"
+	const char *vertex_shader2 = "#version 410\n"						// Vertex Shader for leaf.
 		"attribute vec3 vp;"
-		"uniform mat4 rotateX, scale, rotateZ2, translate, resultAgain;"
+		"uniform mat4 rotateX, scale, rotateZ2, translate, resultAgain;"	//Gets matrices inside vertex shader.
 		"void main () {"
-		"  gl_Position =  (scale * (translate * vec4(vp, 1.0)));"
+		"  gl_Position =  (scale * (translate * vec4(vp, 1.0)));"			//Multiplies vec4 by matrices.
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
-	const char *fragment_shader2 = "#version 410\n"
+	const char *fragment_shader2 = "#version 410\n"						// Fragment Shader for leaf.
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.1333, 0.545, 0.5, 1.0);"
+		"  frag_colour = vec4 (0.1333, 0.545, 0.5, 1.0);"				// Makes leaf green.
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
@@ -607,19 +605,19 @@ int main() {
 		/* draw points 0-3 from the currently bound VAO with current in-use shader */
 		glDrawArrays(GL_LINES, 0, totalCount);
 	//------------------------------------------------------------------------------------	Leaf stuff
-		int Xrotation = glGetUniformLocation (shader_programme2, "rotateX");
+		int Xrotation = glGetUniformLocation (shader_programme2, "rotateX");			//Imports rotateX matrix into vertex shader.
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (Xrotation, 1, GL_FALSE, rotateX);
 		
-		int scaleLeaf = glGetUniformLocation (shader_programme2, "scale");
+		int scaleLeaf = glGetUniformLocation (shader_programme2, "scale");				//Imports scale matrix into vertex shader.
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (scaleLeaf, 1, GL_FALSE, scale);
 		
-		int Zrotation = glGetUniformLocation (shader_programme2, "rotateZ2");
+		int Zrotation = glGetUniformLocation (shader_programme2, "rotateZ2");			//Imports rotateZ2 matrix into vertex shader.
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (Zrotation, 1, GL_FALSE, rotateZ2);
 		
-		GLfloat translation = glGetUniformLocation (shader_programme2, "translate");
+		GLfloat translation = glGetUniformLocation (shader_programme2, "translate");	//Imports translate matrix into vertex shader.
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (translation, 1, GL_FALSE, translate);
 		
