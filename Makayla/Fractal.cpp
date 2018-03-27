@@ -24,6 +24,27 @@ void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this
 	result[3] = (matrix1[3]*matrix2[0]) + (matrix1[7]*matrix2[1]) + (matrix1[11]*matrix2[2]) + (matrix1[15]*matrix2[3]);
 }
 
+void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
+	//GLfloat* result = new float[16];
+	result[0] = (matrix1[0]*matrix2[0])+(matrix1[4]*matrix2[1])+(matrix1[8]*matrix2[2])+(matrix1[12]*matrix2[3]);
+	result[4] = (matrix1[0]*matrix2[4])+(matrix1[4]*matrix2[5])+(matrix1[8]*matrix2[6])+(matrix1[12]*matrix2[7]);
+	result[8] = (matrix1[0]*matrix2[8])+(matrix1[4]*matrix2[9])+(matrix1[8]*matrix2[10])+(matrix1[12]*matrix2[11]);
+	result[12] = (matrix1[0]*matrix2[12])+(matrix1[4]*matrix2[13])+(matrix1[8]*matrix2[14])+(matrix1[12]*matrix2[15]);
+	result[1] = (matrix1[1]*matrix2[0])+(matrix1[5]*matrix2[1])+(matrix1[9]*matrix2[2])+(matrix1[13]*matrix2[3]);
+	result[5] = (matrix1[1]*matrix2[4])+(matrix1[5]*matrix2[5])+(matrix1[9]*matrix2[6])+(matrix1[13]*matrix2[7]);
+	result[9] = (matrix1[1]*matrix2[8])+(matrix1[5]*matrix2[9])+(matrix1[9]*matrix2[10])+(matrix1[13]*matrix2[11]);
+	result[13] = (matrix1[1]*matrix2[12])+(matrix1[5]*matrix2[13])+(matrix1[9]*matrix2[14])+(matrix1[13]*matrix2[15]);
+	result[2] = (matrix1[2]*matrix2[0])+(matrix1[6]*matrix2[1])+(matrix1[10]*matrix2[2])+(matrix1[14]*matrix2[3]);
+	result[6] = (matrix1[2]*matrix2[4])+(matrix1[6]*matrix2[5])+(matrix1[10]*matrix2[6])+(matrix1[14]*matrix2[7]);
+	result[10] = (matrix1[2]*matrix2[8])+(matrix1[6]*matrix2[9])+(matrix1[10]*matrix2[10])+(matrix1[14]*matrix2[11]);
+	result[14] = (matrix1[2]*matrix2[12])+(matrix1[6]*matrix2[13])+(matrix1[10]*matrix2[14])+(matrix1[14]*matrix2[15]);
+	result[3] = (matrix1[3]*matrix2[0])+(matrix1[7]*matrix2[1])+(matrix1[11]*matrix2[2])+(matrix1[15]*matrix2[3]);
+	result[7] = (matrix1[3]*matrix2[4])+(matrix1[7]*matrix2[5])+(matrix1[11]*matrix2[6])+(matrix1[15]*matrix2[7]);
+	result[11] = (matrix1[3]*matrix2[8])+(matrix1[7]*matrix2[9])+(matrix1[11]*matrix2[10])+(matrix1[15]*matrix2[11]);
+	result[15] = (matrix1[3]*matrix2[12])+(matrix1[7]*matrix2[13])+(matrix1[11]*matrix2[14])+(matrix1[15]*matrix2[15]);
+	//return result;
+}
+
 string generatePattern(){												//Generates a pattern to create a tree.
     int numIts = 4; // Number of iterations
     string pattern = "F"; //"[X]";    // Using F for the pattern 
@@ -31,7 +52,6 @@ string generatePattern(){												//Generates a pattern to create a tree.
     for (int i = 0; i < numIts; i++){
         string newPattern = ""; 
         for (int idx = 0; idx < pattern.length(); idx++){
-            //cout << "char: " << pattern.substr(idx,1) << endl;
             if (pattern.substr(idx,1).compare("F") == 0) 
 			newPattern += "F[F][-F][+F]";   //"F[-F][F][+F]"
             else if (pattern.substr(idx,1).compare("X") == 0) 
@@ -84,9 +104,7 @@ void loadVertices(string modelName, GLfloat verts[]){
 	float a, b, c;
 	while (fscanf(objFile, "%s", &buf) != EOF){ 
 	    if (strcmp(buf,label) == 0){
-		//cout << "vertex" << endl;
 		fscanf(objFile, "%f %f %f\n", &a, &b, &c);
-		//cout << "a,b,c: " << a << ", " << b << ", " << c << endl;
 		if (a > maxX)
 		    maxX = a;
 		if (a < minX)
@@ -140,9 +158,6 @@ void computeFaceNormals(GLfloat faceNormals[], GLfloat verts[], GLint faces[], i
 		float ny = uz*vx - ux*vz;
 		float nz = ux*vy - uy*vx;
 		float mag = sqrt(nx*nx + ny*ny + nz*nz);
-		
-	//	cout << "avg norm" << nx << ", " << ny << ", " << nz << endl;
-		//cout << "mag: " << mag << endl;
 		faceNormals[3*i + 0] = nx/mag;
 		faceNormals[3*i + 1] = ny/mag;
 		faceNormals[3*i + 2] = nz/mag;
@@ -176,7 +191,6 @@ void computeVertNormals(GLfloat normals[], GLfloat verts[], int numVerts, GLint 
 		avgX /= numF_vert;
 		avgY /= numF_vert;
 		avgZ /= numF_vert;
-		//cout << "avg norm" << avgX << ", " << avgY << ", " << avgZ << endl;
 		normals[i*3 + 0] = avgX;
 		normals[i*3 + 1] = avgY;
 		normals[i*3 + 2] = avgZ;
@@ -193,13 +207,8 @@ void loadFaces(string modelName, GLint faces[]){    			//To read in Maya OBJ fil
     char label[] = "f";
     float a, b, c, a1, b1, c1, a2, b2, c2;
     while (fscanf(objFile, "%s", &buf) != EOF){ 
-    //for (int z0 = 0; z0 < 100; z0++){
-        //cout << "buf: " << buf << endl;
         if (strcmp(buf,label) == 0){
-        //cout << "vertex" << endl;
         fscanf(objFile, "%f/%f/%f %f/%f/%f %f/%f/%f\n", &a, &b, &c, &a1, &b1, &c1, &a2, &b2, &c2);
-        //cout << "a,b,c: " << a << ", " << b << ", " << c << endl;
-        
                 faces[3*numFaces+0] = a-1;
                 faces[3*numFaces+1] = a1-1;
                 faces[3*numFaces+2] = a2-1;
@@ -220,23 +229,20 @@ int main() {
 	GLuint vao;
 	GLuint vbo;
 	
+	GLfloat* resultAgain = new float[16];
+	
 	int rotation;
 	int count = 1;
 	int countBracket = 1;
 	string pattern = generatePattern();
-	//cout << "pattern: " << pattern << endl;
-	//cout << endl;
 	for (int idx = 0; idx < pattern.length(); idx++){
 			if (pattern.substr(idx, 1).compare("F") == 0){
 				count ++;
-				//cout << "F" << endl;
 			}
 			else if (pattern.substr(idx, 1).compare("]") == 0){
 				countBracket ++;
-				//cout << "]" << endl;
 			}
 		}
-	//cout << "Bracket " << countBracket << endl << endl;
 	int totalCount = count + countBracket;							//Total amount of points, including the backtracking points that are added for the lines.
 	GLfloat branchPoints[totalCount*3]; 							//List of points to make the branches. Includes extra points for lines.
 	GLfloat leafPoints[countBracket*3];								//List of points to place the leaves - only on the ends of branches though.
@@ -245,75 +251,75 @@ int main() {
 	stack<float> PositionStack;
 	stack<float> HeadingStack;
 	float rz = (90 * 3.14159) / 180;	//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
-	float rx = (-90 * 3.14159) / 180;
-	float ry = (90 * 3.14159) / 180;
+	float rz2 = (-30 * 3.14159) / 180;
+	float rx = (-90 * 3.14159) / 180;	//Rotates the leaf OBJ to be upright in radians.
+	float ry = (0 * 3.14159) / 180;
+	GLfloat dx;
+	GLfloat dy;
+	GLfloat dz;
 	int pointsCount = 0;
 	int leafCount = 0;
-	GLfloat sx = .025;
-	GLfloat sy = .035;
-	GLfloat sz = .045;
+	GLfloat sx = .25;					//Scales the leaf.
+	GLfloat sy = .35;					//Scales the leaf.
+	GLfloat sz = .45;					//Scales the leaf.
 	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};
 	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};
-	GLfloat rotateZ[] = 
+	GLfloat rotateZ[] = 				//Rotation matrix for the z-axis.
 		{cos(rz),sin(rz),0,0,
 		-sin(rz),cos(rz),0,0,
 		0,0,1,0,
 		0,0,0,1};
-	GLfloat scale[] =
+	GLfloat rotateZ2[] = 				//Rotation matrix for the z-axis.
+		{cos(rz2),sin(rz2),0,0,
+		-sin(rz2),cos(rz2),0,0,
+		0,0,1,0,
+		0,0,0,1};
+	GLfloat scale[] =					//Scale matrix.
 		{sx,0,0,0,
 		 0,sy,0,0,
 		 0,0,sz,0,
 		 0,0,0,1};
-	GLfloat rotateX[] = 
+	GLfloat rotateX[] = 											//Rotation matrix for the x-axis.
 		{1,0,0,0,
 		 0,cos(rx),-sin(rx),0,
 		 0,sin(rx),cos(rx),0,
 		 0,0,0,1}; 
-		
-	GLfloat rotateY[] = 
+	GLfloat rotateY[] =												//Rotation matrix for the y-axis. 
 		{cos(ry),0,sin(ry),0,
 		 0,1,0,0,
 		 -sin(ry),0,cos(ry),0,
 		 0,0,0,1};
+	dx = 5;
+	dy = 5;
+	dz = 0;
+	GLfloat translate[] =											//Translation matrix.
+		{1,0,0,dx,
+		 0,1,0,dy,
+		 0,0,1,dz,
+		 0,0,0,1};
+
 
 	branchPoints[pointsCount] = currentPosition[0];					//These lines add the first set of points to the list of points.
-	//cout << "Points 1: " << branchPoints[pointsCount] << endl;
 	pointsCount++;
 	branchPoints[pointsCount] = currentPosition[1];
-	//cout << "Points 2: " << branchPoints[pointsCount] << endl;
 	pointsCount++;
 	branchPoints[pointsCount] = currentPosition[2];
-	//cout << "Points 3: " << branchPoints[pointsCount] << endl;
 	pointsCount++;
-	//branchPoints[pointsCount] = currentPosition[3];
-	//cout << "Points 4: " << branchPoints[pointsCount] << endl;
-	//pointsCount++;
-	//cout << endl;
 	
-	for (int idx = 0; idx < pattern.length(); idx++){
-		
-		//cout << "STRING: " << pattern.substr(idx, 1) << endl << endl;
-		
+	for (int idx = 0; idx < pattern.length(); idx++){		
 		if (pattern.substr(idx,1).compare("[") == 0){
-			//cout << "Printing currentPosition before push " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
 			PositionStack.push(currentPosition[3]);					//Pushes the currentPosition onto the PositionStack.
 			PositionStack.push(currentPosition[2]);
 			PositionStack.push(currentPosition[1]);
 			PositionStack.push(currentPosition[0]);
-			//cout << "Printing currentPosition after push " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
-			//cout << endl;
 			
-			//cout << "Printing currentHeading before push " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
 			HeadingStack.push(currentHeading[3]);					//Pushes the currentHeading onto the HeadingStack.
 			HeadingStack.push(currentHeading[2]);
 			HeadingStack.push(currentHeading[1]);
 			HeadingStack.push(currentHeading[0]);
-			//cout << "Printing currentHeading after push " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			//cout << endl;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("]") == 0){
-			//cout << "Printing currentPosition before pop " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
 			currentPosition[0] = PositionStack.top();				//Sets the current position back to the top of the stack.
 			leafPoints[leafCount] = currentPosition[0];				//Adds the point to the array which will be where I put my leaf OBJ.
 			leafCount++;
@@ -330,27 +336,15 @@ int main() {
 			PositionStack.pop();
 			
 			currentPosition[3] = PositionStack.top();
-			//leafPoints[leafCount] = currentPosition[3];
-			//leafCount++;
 			PositionStack.pop();
-			//cout << "Printing currentPosition after pop " << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
-			//cout << endl;
-			
+
 			branchPoints[pointsCount] = currentPosition[0];			//Adds the currentPosition to the list of points.
-			//cout << "Points 1: " << branchPoints[pointsCount] << endl;
 			pointsCount++;
 			branchPoints[pointsCount] = currentPosition[1];
-			//cout << "Points 2: " << branchPoints[pointsCount] << endl;
 			pointsCount++;
 			branchPoints[pointsCount] = currentPosition[2];
-			//cout << "Points 3: " << branchPoints[pointsCount] << endl;
 			pointsCount++;
-			//branchPoints[pointsCount] = currentPosition[3];
-			//cout << "Points 4: " << branchPoints[pointsCount] << endl;
-			//pointsCount++;
-			//cout << endl; 
-			
-			//cout << "Printing currentHeading before pop " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;			
+		
 			currentHeading[0] = HeadingStack.top();					//Sets the currentHeading to the top of the HeadingStack.
 			HeadingStack.pop();										//Pops the currentHeading from the top of the stack.
 			currentHeading[1] = HeadingStack.top();
@@ -359,77 +353,50 @@ int main() {
 			HeadingStack.pop();
 			currentHeading[3] = HeadingStack.top();
 			HeadingStack.pop();
-			//cout << "Printing currentHeading after pop " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			//cout << endl;
 		}
 		
-		else if (pattern.substr(idx, 1).compare("F") == 0){
-			
-			//cout << " F before adding" << endl;
-			//cout << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
-			
+		else if (pattern.substr(idx, 1).compare("F") == 0){			
 			currentPosition[0] += currentHeading[0]*.2;				//Changes the height of the tree, I like .2.
 			currentPosition[1] += currentHeading[1]*.2;
 			currentPosition[2] += currentHeading[2]*.2;
 			currentPosition[3] += currentHeading[3];
 			
-			//cout << " F after adding" << endl;
-			//cout << currentPosition[0] << " " << currentPosition[1] << " " << currentPosition[2] << " " << currentPosition[3] << endl;
-			//cout << endl;
-			
 			branchPoints[pointsCount] = currentPosition[0];			//Adds the currentPosition to the list of points.
-			//cout << "Points 1: " << branchPoints[pointsCount] << endl;
 			pointsCount++;
 			branchPoints[pointsCount] = currentPosition[1];
-			//cout << "Points 2: " << branchPoints[pointsCount] << endl;
 			pointsCount++;
 			branchPoints[pointsCount] = currentPosition[2];
-			//cout << "Points 3: " << branchPoints[pointsCount] << endl;
 			pointsCount++;
-			//branchPoints[pointsCount] = currentPosition[3];
-			//cout << "Points 4: " << branchPoints[pointsCount] << endl;
-			//pointsCount++;
-			//cout << endl;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("+") == 0){
-			//cout <<  "+ rz before " << rz << endl;
 			rotation = rand() % 65 + 1;							//Chooses a random number to rotate by from 0 to 65.
 			float rz =-  ((rotation * 3.14159) / 180);			//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
 			rotateZ[4] = -sin(rz);
 			rotateZ[5] = cos(rz);
-			//cout <<  "+ rz after " << rz << endl;
-			//cout << endl;
 			multiply(rotateZ, currentHeading, result);		//Multiplies the rotateZ matrix by the currentHeading to get the new currentHeading.
 			float magnitude = sqrt((result[0]*result[0]) + (result[1]*result[1]) + (result[2]*result[2]) + (result[3]*result[3]));	//Finds magnitude for normalization of heading.
 			currentHeading[0] = result[0] / magnitude;		//Normalizes the currentHeading vector.
 			currentHeading[1] = result[1] / magnitude;
 			currentHeading[2] = result[2] / magnitude;
 			currentHeading[3] = result[3] / magnitude;
-			//cout << "Current Heading after Normalization: " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			//cout << endl;
 		}
 		
 		else if (pattern.substr(idx, 1).compare("-") == 0){
-			//cout <<  "- rz before " << rz << endl;
 			rotation = rand() % 65 + 1;							//Chooses a random number to rotate by from 0 to 65.
 			float rz =+ ((rotation * 3.14159) / 180);			//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
 			rotateZ[4] = -sin(rz);
 			rotateZ[5] = cos(rz);
-			//cout <<  "- rz after " << rz << endl;
-			//cout << endl;
 			multiply(rotateZ, currentHeading, result);			//Multiplies the rotateZ matrix by the currentHeading to get the new currentHeading.
 			float magnitude = sqrt((result[0]*result[0]) + (result[1]*result[1]) + (result[2]*result[2]) + (result[3]*result[3]));	//Finds magnitude for normalization of heading.
 			currentHeading[0] = result[0] / magnitude;			//Normalizes the currentHeading vector.
 			currentHeading[1] = result[1] / magnitude;
 			currentHeading[2] = result[2] / magnitude;
 			currentHeading[3] = result[3] / magnitude;
-			/*cout << "Current Heading after Normalization: " << currentHeading[0] << " " << currentHeading[1] << " " << currentHeading[2] << " " << currentHeading[3] << endl;
-			cout << endl;*/
 		}
 	}
 
@@ -476,6 +443,10 @@ int main() {
 	}
 	int numPoints = 3*numFaces;
 	
+	multiplyAgain(translate, scale, resultAgain);
+	cout << resultAgain[10] << endl;
+	
+	
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
 	const char *vertex_shader = "#version 410\n"
@@ -488,7 +459,7 @@ int main() {
 	const char *fragment_shader = "#version 410\n"
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.80, 0.5215, 0.247, 1.0);"
+		"  frag_colour = vec4 (0.545, 0.27, 0.074, 1.0);"    //0.80, 0.5215, 0.247, 1.0
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader, frag_shader;
@@ -496,20 +467,21 @@ int main() {
 	GLuint shader_programme;
 	
 	//-----------------------------------------------------------------------------  Leaf Stuff
+	//rotateX * rotateZ2 * scale * 
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
 	const char *vertex_shader2 = "#version 410\n"
 		"attribute vec3 vp;"
-		"uniform mat4 rotateX, scale;"
+		"uniform mat4 rotateX, scale, rotateZ2, translate, resultAgain;"
 		"void main () {"
-		"  gl_Position =  rotateX * scale * vec4 (vp, 1.0);"
+		"  gl_Position =  (scale * (translate * vec4(vp, 1.0)));"
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
 	const char *fragment_shader2 = "#version 410\n"
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.1333, 0.545, 0.5, 0.1333);"
+		"  frag_colour = vec4 (0.1333, 0.545, 0.5, 1.0);"
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
@@ -631,15 +603,29 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shader_programme);
 		glBindVertexArray(vao);
+		glLineWidth(1.5);
 		/* draw points 0-3 from the currently bound VAO with current in-use shader */
 		glDrawArrays(GL_LINES, 0, totalCount);
 	//------------------------------------------------------------------------------------	Leaf stuff
 		int Xrotation = glGetUniformLocation (shader_programme2, "rotateX");
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (Xrotation, 1, GL_FALSE, rotateX);
+		
 		int scaleLeaf = glGetUniformLocation (shader_programme2, "scale");
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (scaleLeaf, 1, GL_FALSE, scale);
+		
+		int Zrotation = glGetUniformLocation (shader_programme2, "rotateZ2");
+		glUseProgram(shader_programme2);
+		glUniformMatrix4fv (Zrotation, 1, GL_FALSE, rotateZ2);
+		
+		GLfloat translation = glGetUniformLocation (shader_programme2, "translate");
+		glUseProgram(shader_programme2);
+		glUniformMatrix4fv (translation, 1, GL_FALSE, translate);
+		
+		/*float* resultAgain = glGetUniformLocation (shader_programme2, "resultAgain");
+		glUseProgram(shader_programme2);
+		glUniformMatrix4fv (resultAgain, 1, GL_FALSE, resultAgain);*/
 		
 		glBindVertexArray(vao2);
 		glDrawArrays(GL_TRIANGLES, 0, numPoints);
