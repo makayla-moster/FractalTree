@@ -67,6 +67,27 @@ string generatePattern(){												//Generates a pattern to create a tree.
     return pattern;    
 }
 
+int countF(string pattern){
+	int count = 1;
+	for (int idx = 0; idx < pattern.length(); idx++){					// Loops through string pattern to find number of 'F' within the pattern.
+		if (pattern.substr(idx, 1).compare("F") == 0){
+			count ++;
+		}
+	}
+	return count;
+}
+
+int countbracket(string pattern) {
+	int countBracket = 1;
+	for (int idx = 0; idx < pattern.length(); idx++){					// Loops through string pattern to find number of ']' within the pattern.
+		if (pattern.substr(idx, 1).compare("]") == 0){
+			countBracket ++;
+		}
+	}	
+	
+	return countBracket;
+}
+
 int countLabel(string modelName, char label[]){
 	int numLab = 0;
 	
@@ -82,10 +103,8 @@ int countLabel(string modelName, char label[]){
 	cout << "Model has " << numLab << " " << label << "\n";
 	fclose(objFile);
 	return numLab;
-
 }
 
-//read in vertices
 void loadVertices(string modelName, GLfloat verts[]){	
 	cout << "Loading vertices\n";
 	int numVert = 0;
@@ -231,23 +250,22 @@ int main() {
 	GLfloat* resultAgain = new float[16];
 	
 	int rotation;													// Rotation of branches.
-	int count = 1;													// Counts number of 'F' in string.
-	int countBracket = 1;											// Counts number of ']' in string.
+	int count;														// Counts number of 'F' in string.
+	int countBracket;												// Counts number of ']' in string.
+	
 	string pattern = generatePattern();								// Generates string pattern to make tree from.
-	for (int idx = 0; idx < pattern.length(); idx++){				// Loops through string pattern to find number of 'F' and ']'.
-			if (pattern.substr(idx, 1).compare("F") == 0){
-				count ++;
-			}
-			else if (pattern.substr(idx, 1).compare("]") == 0){
-				countBracket ++;
-			}
-		}
+	count = countF(pattern);										// Function to count the number of 'F' in the string.
+	countBracket = countbracket(pattern);							// Function to count the number of ']' in the string.
 	int totalCount = count + countBracket;							//Total amount of points, including the backtracking points that are added for the lines.
+	
 	GLfloat branchPoints[totalCount*3]; 							//List of points to make the branches. Includes extra points for lines.
 	GLfloat leafPoints[countBracket*3];								//List of points to place the leaves - only on the ends of branches though.
 	GLfloat* result = new float[4];									//This is a new 4x1 matrix to acquire the new heading.	
 	stack<float> PositionStack;										//Stack to put branch point positions on.
 	stack<float> HeadingStack;										//Stack to put branch headings on.
+	int pointsCount = 0;											//Counts number of points needed to make a matrix of points.
+	int leafCount = 0;												//Counts number of points needed to make a matrix for leaves.
+	
 	float rz = (90 * 3.14159) / 180;								//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
 	float rz2 = (-30 * 3.14159) / 180;								//For rotation of leaf.
 	float rx = (-90 * 3.14159) / 180;								//Rotates the leaf OBJ to be upright in radians.
@@ -255,8 +273,6 @@ int main() {
 	GLfloat dx;														//For leaf translation along the x-axis.
 	GLfloat dy;														//For leaf translation along the y-axis.
 	GLfloat dz;														//For leaf translation along the z-axis.
-	int pointsCount = 0;											//Counts number of points needed to make a matrix of points.
-	int leafCount = 0;												//Counts number of points needed to make a matrix for leaves.
 	GLfloat sx = .25;												//Scales the leaf.
 	GLfloat sy = .35;												//Scales the leaf.
 	GLfloat sz = .45;												//Scales the leaf.
@@ -287,8 +303,8 @@ int main() {
 		 0,1,0,0,
 		 -sin(ry),0,cos(ry),0,
 		 0,0,0,1};
-	dx = 5;															//Translates leaf along the x-axis.
-	dy = 5;															//Translates leaf along the y-axis.
+	dx = 0;															//Translates leaf along the x-axis.
+	dy = 0;															//Translates leaf along the y-axis.
 	dz = 0;															//Translates leaf along the z-axis.
 	GLfloat translate[] =											//Translation matrix.
 		{1,0,0,dx,
@@ -472,7 +488,7 @@ int main() {
 		"attribute vec3 vp;"
 		"uniform mat4 rotateX, scale, rotateZ2, translate, resultAgain;"	//Gets matrices inside vertex shader.
 		"void main () {"
-		"  gl_Position =  (scale * (translate * vec4(vp, 1.0)));"			//Multiplies vec4 by matrices.
+		"  gl_Position =  rotateX * (scale * (translate * vec4(vp, 1.0)));"			//Multiplies vec4 by matrices.
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
