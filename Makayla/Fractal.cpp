@@ -438,9 +438,9 @@ int main() {
 	GLfloat* vertNormals = new GLfloat[3*numVert];
 	computeVertNormals(vertNormals, verts, numVert, faces, numFaces, faceNormals);	// Computes the number of vertex normals in OBJ.
 	
-	int leafNum = 2;
+	int leavesWanted = 1;
 	
-	GLfloat* points = new GLfloat[leafNum*9*numFaces];
+	GLfloat* points = new GLfloat[leavesWanted*9*numFaces];
 	GLfloat* normals = new GLfloat[9*numFaces];
 	for (int i = 0; i < numFaces; i++){
 	    int idx1 = faces[3*i + 0];
@@ -467,12 +467,9 @@ int main() {
 	}
 	int numPoints = 3*numFaces;
 	
-	//multiplyAgain(scale, translate, resultAgain);									// Testing whether multiply will work
-	//cout << resultAgain[10] << endl;
+	cout << 9*numFaces << endl;
 	
-
-	
-	cout << leafCount << endl;
+	/*cout << leafCount << endl;
 	dx = leafPoints[3];
 	cout << leafPoints[3] << endl;
 	dy = leafPoints[4];
@@ -484,11 +481,38 @@ int main() {
 	translate[13] = dy;
 	translate[14] = dz;
 	
-	//Position X 0.51423
-	//Position Y 0.462836
-	//Position Z 0
-	//cout << leafPoints[2] << endl;
+	cout << points[0] << " " << points[1] << " " << points[2] << endl;*/
+	
 
+	//for (int leafNum = 0; leafNum == leavesWanted*3; leafNum += 3){
+		
+
+			
+	for (int i = 0; i < leavesWanted * 9 * numFaces; i += 3){
+		//cout << "BEFORE Points[i], [i+1] [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
+		GLfloat* new4x4 = new float[16];
+		GLfloat* new4x1 = new float[4];
+			
+		dx = leafPoints[0]; //[leafNum];
+		dy = leafPoints[1]; //[leafNum + 1];
+		dz = leafPoints[2]; //[leafNum + 2];
+		
+		translate[12] = dx;
+		translate[13] = dy;
+		translate[14] = dz;
+			
+		multiplyAgain(scale, rotateX, new4x4);
+		multiplyAgain(translate, new4x4, new4x4);
+		float currentLeafPoint[] = {points[i], points[i+1], points[i+2], 1};
+		
+		multiply(new4x4, currentLeafPoint, new4x1);
+		points[i] = new4x1[0];
+		points[i+1] = new4x1[1];
+		points[i+2] = new4x1[2];
+		
+		//cout << "AFTER Points[i], [i+1] [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
+	}
+	//}
 	
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
@@ -515,9 +539,9 @@ int main() {
 	the vertex shader positions each vertex point */
 	const char *vertex_shader2 = "#version 410\n"									// Vertex Shader for leaf.
 		"attribute vec3 vp;"
-		"uniform mat4 rotateX, scale, rotateZ2, translate, resultAgain;"			//Gets matrices inside vertex shader.
+		"uniform mat4;" // rotateX, scale, rotateZ2, translate, resultAgain;"			//Gets matrices inside vertex shader.
 		"void main () {"
-		"  gl_Position =  (rotateX * (translate * (scale * vec4(vp, 1.0))));"			//Multiplies vec4 by matrices.
+		"  gl_Position = vec4(vp, 1.0);"						//Multiplies vec4 by matrices.
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
@@ -535,7 +559,7 @@ int main() {
 	/* start GL context and O/S window using the GLFW helper library */
 	if ( !glfwInit() ) {
 		fprintf( stderr, "ERROR: could not start GLFW3\n" );
-		return 1;
+		return 1; 
 	}
 
 	window = glfwCreateWindow(640, 480, "Fractal Window", NULL, NULL);
@@ -666,9 +690,9 @@ int main() {
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (translation, 1, GL_FALSE, translate);
 		
-		int resultA = glGetUniformLocation (shader_programme2, "resultAgain");
+		int points1 = glGetUniformLocation (shader_programme2, "points");
 		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (resultA, 1, GL_FALSE, translate);
+		glUniformMatrix4fv (points1, 1, GL_FALSE, points);
 		
 		glBindVertexArray(vao2);
 		glDrawArrays(GL_TRIANGLES, 0, numPoints);
