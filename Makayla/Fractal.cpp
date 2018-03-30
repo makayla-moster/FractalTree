@@ -342,9 +342,9 @@ int main() {
 			leafPoints[leafCount] = currentPosition[2];
 			leafCount++;	
 			
-			cout << "Position X " << currentPosition[0] << endl;
+			/*cout << "Position X " << currentPosition[0] << endl;
 			cout << "Position Y " << currentPosition[1] << endl;
-			cout << "Position Z " << currentPosition[2] << endl;
+			cout << "Position Z " << currentPosition[2] << endl;*/
 			
 			currentPosition[0] = PositionStack.top();				//Sets the current position back to the top of the stack.
 			PositionStack.pop();									//Pops the current position from the top of the stack.
@@ -390,8 +390,8 @@ int main() {
 		}
 		
 		else if (pattern.substr(idx, 1).compare("+") == 0){
-			//rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
-			rotation = 45;
+			rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
+			//rotation = 45;
 			float rz =-  ((rotation * 3.14159) / 180);				//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
@@ -406,8 +406,8 @@ int main() {
 		}
 		
 		else if (pattern.substr(idx, 1).compare("-") == 0){
-			//rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
-			rotation = 45;
+			rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
+			//rotation = 45;
 			float rz =+ ((rotation * 3.14159) / 180);				//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
@@ -438,7 +438,7 @@ int main() {
 	GLfloat* vertNormals = new GLfloat[3*numVert];
 	computeVertNormals(vertNormals, verts, numVert, faces, numFaces, faceNormals);	// Computes the number of vertex normals in OBJ.
 	
-	int leavesWanted = 1;
+	int leavesWanted = leafCount / 3;
 	
 	GLfloat* points = new GLfloat[leavesWanted*9*numFaces];
 	GLfloat* normals = new GLfloat[9*numFaces];
@@ -467,7 +467,7 @@ int main() {
 	}
 	int numPoints = 3*numFaces;
 	
-	cout << 9*numFaces << endl;
+	cout << 3*9*numFaces << endl;
 	
 	/*cout << leafCount << endl;
 	dx = leafPoints[3];
@@ -483,36 +483,43 @@ int main() {
 	
 	cout << points[0] << " " << points[1] << " " << points[2] << endl;*/
 	
-
-	//for (int leafNum = 0; leafNum == leavesWanted*3; leafNum += 3){
+	cout << leafCount << endl;
+	
+	for (int beginLeaf = 0; beginLeaf < leavesWanted; beginLeaf++) {							// Begins making multiple leaves.
+																								// Sets beginLeaf to 0 and counts up to the number of leaves needed.
+		int endLeaf = beginLeaf + 1;															// Sets endLeaf to be one greater than beginLeaf.
+		cout << beginLeaf << " " << endLeaf << endl;											// Creates a "leaf" from beginLeaf to endLeaf.
 		
-
+			for (int i = beginLeaf*9*numFaces; i < endLeaf * 9 * numFaces - 1; i += 3){			// Starts loop to multiply each point by my matrices.
+				
+				//cout << "BEFORE Points[i], [i+1], [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
+				GLfloat* new4x4 = new float[16];
+				GLfloat* new4x1 = new float[4];
+				
+				dx = leafPoints[beginLeaf*3 + 0];												// Gets the x value of the end of the current branch.	
+				dy = leafPoints[beginLeaf*3 + 1];												// Gets the y value of the end of the current branch.
+				dz = leafPoints[beginLeaf*3 + 2];												// Gets the z value of the end of the current branch.
+				
+				translate[12] = dx;																// Sets the dx value of translate to be the x-val of the current branch.
+				translate[13] = dy;																// Sets the dy value of translate to be the y-val of the current branch.
+				translate[14] = dz;																// Sets the dz value of translate to be the z-val of the current branch.
+				
+				multiplyAgain(scale, rotateX, new4x4);											// Multiplies two 4x4 matrices together and makes a new matrix.
+				multiplyAgain(translate, new4x4, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
+				float currentLeafPoint[] = {points[i], points[i+1], points[i+2], 1};			// Gets the x, y, z values from points (leaf) to multiply by.
+				
+				multiply(new4x4, currentLeafPoint, new4x1);										// Multiplies a 4x4 and a 4x1 matrix together and makes a new 4x1 matrix.
+				points[i + 0] = new4x1[0];														// Sets current points x-val to be the x-val of the new	4x1 matrix.	
+				points[i + 1] = new4x1[1];														// Sets current points y-val to be the y-val of the new	4x1 matrix.	
+				points[i + 2] = new4x1[2];														// Sets current points z-val to be the z-val of the new	4x1 matrix.	
+				
+				//cout << "AFTER Points[i], [i+1], [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
+			}
 			
-	for (int i = 0; i < leavesWanted * 9 * numFaces; i += 3){
-		//cout << "BEFORE Points[i], [i+1] [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
-		GLfloat* new4x4 = new float[16];
-		GLfloat* new4x1 = new float[4];
-			
-		dx = leafPoints[0]; //[leafNum];
-		dy = leafPoints[1]; //[leafNum + 1];
-		dz = leafPoints[2]; //[leafNum + 2];
-		
-		translate[12] = dx;
-		translate[13] = dy;
-		translate[14] = dz;
-			
-		multiplyAgain(scale, rotateX, new4x4);
-		multiplyAgain(translate, new4x4, new4x4);
-		float currentLeafPoint[] = {points[i], points[i+1], points[i+2], 1};
-		
-		multiply(new4x4, currentLeafPoint, new4x1);
-		points[i] = new4x1[0];
-		points[i+1] = new4x1[1];
-		points[i+2] = new4x1[2];
-		
-		//cout << "AFTER Points[i], [i+1] [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
+		cout << dx << " " << dy << " " << dz << endl;
+		cout << beginLeaf*9*numFaces << " " << endLeaf * 9 * numFaces - 1 << endl;
 	}
-	//}
+	
 	
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
@@ -539,9 +546,9 @@ int main() {
 	the vertex shader positions each vertex point */
 	const char *vertex_shader2 = "#version 410\n"									// Vertex Shader for leaf.
 		"attribute vec3 vp;"
-		"uniform mat4;" // rotateX, scale, rotateZ2, translate, resultAgain;"			//Gets matrices inside vertex shader.
+		"uniform mat4;" // rotateX, scale, rotateZ2, translate, resultAgain;"		//Gets matrices inside vertex shader.
 		"void main () {"
-		"  gl_Position = vec4(vp, 1.0);"						//Multiplies vec4 by matrices.
+		"  gl_Position = vec4(vp, 1.0);"											//Multiplies vec4 by matrices.
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
