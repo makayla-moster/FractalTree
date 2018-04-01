@@ -467,7 +467,7 @@ int main() {
 	}
 	int numPoints = 3*numFaces;
 	
-	cout << 3*9*numFaces << endl;
+	cout << leavesWanted*9*numFaces << endl;
 	
 	/*cout << leafCount << endl;
 	dx = leafPoints[3];
@@ -483,14 +483,15 @@ int main() {
 	
 	cout << points[0] << " " << points[1] << " " << points[2] << endl;*/
 	
-	cout << leafCount << endl;
+	cout << leafCount << endl << endl;
 	
 	for (int beginLeaf = 0; beginLeaf < leavesWanted; beginLeaf++) {							// Begins making multiple leaves.
-																								// Sets beginLeaf to 0 and counts up to the number of leaves needed.
+																	 							// Sets beginLeaf to 0 and counts up to the number of leaves needed.
 		int endLeaf = beginLeaf + 1;															// Sets endLeaf to be one greater than beginLeaf.
+		cout << "leaf " << endLeaf << endl;
 		cout << beginLeaf << " " << endLeaf << endl;											// Creates a "leaf" from beginLeaf to endLeaf.
 		
-			for (int i = beginLeaf*9*numFaces; i < endLeaf * 9 * numFaces - 1; i += 3){			// Starts loop to multiply each point by my matrices.
+			for (int i = beginLeaf*9*numFaces; i < endLeaf*9*numFaces - 1; i += 3){				// Starts loop to multiply each point by my matrices.
 				
 				//cout << "BEFORE Points[i], [i+1], [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
 				GLfloat* new4x4 = new float[16];
@@ -506,7 +507,7 @@ int main() {
 				
 				multiplyAgain(scale, rotateX, new4x4);											// Multiplies two 4x4 matrices together and makes a new matrix.
 				multiplyAgain(translate, new4x4, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
-				float currentLeafPoint[] = {points[i], points[i+1], points[i+2], 1};			// Gets the x, y, z values from points (leaf) to multiply by.
+				float currentLeafPoint[] = {points[i], points[i + 1], points[i + 2], 1};		// Gets the x, y, z values from points (leaf) to multiply by.
 				
 				multiply(new4x4, currentLeafPoint, new4x1);										// Multiplies a 4x4 and a 4x1 matrix together and makes a new 4x1 matrix.
 				points[i + 0] = new4x1[0];														// Sets current points x-val to be the x-val of the new	4x1 matrix.	
@@ -517,7 +518,7 @@ int main() {
 			}
 			
 		cout << dx << " " << dy << " " << dz << endl;
-		cout << beginLeaf*9*numFaces << " " << endLeaf * 9 * numFaces - 1 << endl;
+		cout << beginLeaf*9*numFaces << " " << endLeaf*9*numFaces - 1 << endl << endl;
 	}
 	
 	
