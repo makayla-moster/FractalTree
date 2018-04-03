@@ -25,7 +25,7 @@ void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this
 	result[3] = (matrix1[3]*matrix2[0]) + (matrix1[7]*matrix2[1]) + (matrix1[11]*matrix2[2]) + (matrix1[15]*matrix2[3]);
 }
 
-void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){ // this is to multiply a 4x4 and a 4x4 matrix together
+/*void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){ // this is to multiply a 4x4 and a 4x4 matrix together
 	//GLfloat* result = new float[16];
 	result[0] = (matrix1[0]*matrix2[0])+(matrix1[4]*matrix2[1])+(matrix1[8]*matrix2[2])+(matrix1[12]*matrix2[3]);
 	result[4] = (matrix1[0]*matrix2[4])+(matrix1[4]*matrix2[5])+(matrix1[8]*matrix2[6])+(matrix1[12]*matrix2[7]);
@@ -44,7 +44,18 @@ void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){ // t
 	result[11] = (matrix1[3]*matrix2[8])+(matrix1[7]*matrix2[9])+(matrix1[11]*matrix2[10])+(matrix1[15]*matrix2[11]);
 	result[15] = (matrix1[3]*matrix2[12])+(matrix1[7]*matrix2[13])+(matrix1[11]*matrix2[14])+(matrix1[15]*matrix2[15]);
 	//return result;
+}*/
+
+void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
+	for (int i = 0; i < 16; i++){
+		for (int j = 0; j < 4; j++){
+			result[i] = result[i] + (matrix2[(i / 4) * 4 + j] * matrix1[(i % 4)+(4*j)]);
+			//cout << matrix2[(i / 4) * 4 + j]  * matrix1[(i % 4)+(4*j)] << endl;
+			//cout << i << " " << j << " " << result[i] << endl;
+		}
+	}
 }
+
 
 string generatePattern(){												//Generates a pattern to create a tree.
     int numIts = 1; // Number of iterations
@@ -311,6 +322,12 @@ int main() {
 		 0,1,0,0,
 		 0,0,1,0,
 		 dx,dy,dz,1};
+		 
+	GLfloat identity[] = 
+		{1,0,0,0,
+		 0,1,0,0,
+		 0,0,1,0,
+		 0,0,0,1};
 
 
 	branchPoints[pointsCount] = currentPosition[0];					//These lines add the first set of points to the list of points.
@@ -319,6 +336,19 @@ int main() {
 	pointsCount++;
 	branchPoints[pointsCount] = currentPosition[2];
 	pointsCount++;
+	
+	//float test4x4[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/*cout << test4x4[0] << " " << test4x4[1] << " " << test4x4[2] << " " << test4x4[3]<< endl;
+	cout << test4x4[4] << " " << test4x4[5] << " " << test4x4[6] << " " << test4x4[7]<< endl;
+	cout << test4x4[8] << " " << test4x4[9] << " " << test4x4[10] << " " << test4x4[11]<< endl;
+	cout << test4x4[12] << " " << test4x4[13] << " " << test4x4[14] << " " << test4x4[15]<< endl << endl;
+	multiplyAgain(identity, identity, test4x4);
+	cout << test4x4[0] << " " << test4x4[1] << " " << test4x4[2] << " " << test4x4[3]<< endl;
+	cout << test4x4[4] << " " << test4x4[5] << " " << test4x4[6] << " " << test4x4[7]<< endl;
+	cout << test4x4[8] << " " << test4x4[9] << " " << test4x4[10] << " " << test4x4[11]<< endl;
+	cout << test4x4[12] << " " << test4x4[13] << " " << test4x4[14] << " " << test4x4[15]<< endl << endl;*/
+	
+	
 	
 	for (int idx = 0; idx < pattern.length(); idx++){				//Parser to parse through the Tree String pattern.
 		if (pattern.substr(idx,1).compare("[") == 0){
@@ -483,7 +513,7 @@ int main() {
 	
 	cout << points[0] << " " << points[1] << " " << points[2] << endl;*/
 	
-	cout << leafCount << endl << endl;
+	cout << leafCount << " " << leafCount / 3 << endl << endl;
 	
 	for (int beginLeaf = 0; beginLeaf < leavesWanted; beginLeaf++) {							// Begins making multiple leaves.
 																	 							// Sets beginLeaf to 0 and counts up to the number of leaves needed.
@@ -494,22 +524,39 @@ int main() {
 			for (int i = beginLeaf*9*numFaces; i < endLeaf*9*numFaces - 1; i += 3){				// Starts loop to multiply each point by my matrices.
 				
 				//cout << "BEFORE Points[i], [i+1], [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
+				int j;
+				int k;
 				GLfloat* new4x4 = new float[16];
+				for (j = 0, k = 0; j < 16; j++){
+					new4x4[j] = k;
+				};
+				GLfloat* newest4x4 = new float[16];
+				for (j = 0, k = 0; j < 16; j++){
+					newest4x4[j] = k;
+				};
 				GLfloat* new4x1 = new float[4];
+				for (j = 0, k = 0; j < 4; j++){
+					new4x1[j] = k;
+				};
 				
-				dx = leafPoints[beginLeaf*3 + 0];												// Gets the x value of the end of the current branch.	
+				/*dx = leafPoints[beginLeaf*3 + 0];												// Gets the x value of the end of the current branch.	
 				dy = leafPoints[beginLeaf*3 + 1];												// Gets the y value of the end of the current branch.
-				dz = leafPoints[beginLeaf*3 + 2];												// Gets the z value of the end of the current branch.
+				dz = leafPoints[beginLeaf*3 + 2];*/												// Gets the z value of the end of the current branch.
+				
+				dx = 0.75 + beginLeaf * 0.5;
+				dy = 0; //-0.5 + beginLeaf * 0.5;
+				dz = 0;
 				
 				translate[12] = dx;																// Sets the dx value of translate to be the x-val of the current branch.
 				translate[13] = dy;																// Sets the dy value of translate to be the y-val of the current branch.
 				translate[14] = dz;																// Sets the dz value of translate to be the z-val of the current branch.
 				
-				multiplyAgain(scale, rotateX, new4x4);											// Multiplies two 4x4 matrices together and makes a new matrix.
-				multiplyAgain(translate, new4x4, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
+				multiplyAgain(scale, translate, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
+				multiplyAgain(rotateX, new4x4, newest4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
+				
 				float currentLeafPoint[] = {points[i], points[i + 1], points[i + 2], 1};		// Gets the x, y, z values from points (leaf) to multiply by.
 				
-				multiply(new4x4, currentLeafPoint, new4x1);										// Multiplies a 4x4 and a 4x1 matrix together and makes a new 4x1 matrix.
+				multiply(newest4x4, currentLeafPoint, new4x1);									// Multiplies a 4x4 and a 4x1 matrix together and makes a new 4x1 matrix.
 				points[i + 0] = new4x1[0];														// Sets current points x-val to be the x-val of the new	4x1 matrix.	
 				points[i + 1] = new4x1[1];														// Sets current points y-val to be the y-val of the new	4x1 matrix.	
 				points[i + 2] = new4x1[2];														// Sets current points z-val to be the z-val of the new	4x1 matrix.	
@@ -619,12 +666,12 @@ int main() {
 	GLuint points_vbo;
 	glGenBuffers (1, &points_vbo);
 	glBindBuffer (GL_ARRAY_BUFFER, points_vbo);
-	glBufferData (GL_ARRAY_BUFFER, 3 * numPoints * sizeof (GLfloat), points, GL_STATIC_DRAW);
+	glBufferData (GL_ARRAY_BUFFER, leavesWanted * 3 * numPoints * sizeof (GLfloat), points, GL_STATIC_DRAW);
 	
 	GLuint normals_vbo;
 	glGenBuffers (1, &normals_vbo);
 	glBindBuffer (GL_ARRAY_BUFFER, normals_vbo);
-	glBufferData (GL_ARRAY_BUFFER, 3 * numPoints * sizeof (GLfloat), normals, GL_STATIC_DRAW);
+	glBufferData (GL_ARRAY_BUFFER, leavesWanted * 3 * numPoints * sizeof (GLfloat), normals, GL_STATIC_DRAW);
 	
 	GLuint vao2;
 	glGenVertexArrays (1, &vao2);
@@ -698,12 +745,8 @@ int main() {
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (translation, 1, GL_FALSE, translate);
 		
-		int points1 = glGetUniformLocation (shader_programme2, "points");
-		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (points1, 1, GL_FALSE, points);
-		
 		glBindVertexArray(vao2);
-		glDrawArrays(GL_TRIANGLES, 0, numPoints);
+		glDrawArrays(GL_TRIANGLES, 0, leavesWanted * numPoints);
 	//------------------------------------------------------------------------------------
 		
 		/* update other events like input handling */
