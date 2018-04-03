@@ -46,7 +46,7 @@ void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this
 	//return result;
 }*/
 
-void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
+GLfloat* multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
 	for (int i = 0; i < 16; i++){
 		for (int j = 0; j < 4; j++){
 			result[i] = result[i] + (matrix2[(i / 4) * 4 + j] * matrix1[(i % 4)+(4*j)]);
@@ -54,6 +54,7 @@ void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
 			//cout << i << " " << j << " " << result[i] << endl;
 		}
 	}
+	return result;
 }
 
 
@@ -284,9 +285,9 @@ int main() {
 	GLfloat dx;														//For leaf translation along the x-axis.
 	GLfloat dy;														//For leaf translation along the y-axis.
 	GLfloat dz;														//For leaf translation along the z-axis.
-	GLfloat sx = .025;												//Scales the leaf.
-	GLfloat sy = .035;												//Scales the leaf.
-	GLfloat sz = .045;												//Scales the leaf.
+	GLfloat sx = .0225;												//Scales the leaf.
+	GLfloat sy = .45;												//Scales the leaf.
+	GLfloat sz = 1;												//Scales the leaf.
 	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};			//Beginning current position of the tree.
 	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};			//Beginning current heading of the tree.
 	GLfloat rotateZ[] = 											//Rotation matrix for the z-axis.
@@ -317,7 +318,7 @@ int main() {
 	dx = 0;															//Translates leaf along the x-axis.
 	dy = 0;															//Translates leaf along the y-axis.
 	dz = 0;															//Translates leaf along the z-axis.
-	GLfloat translate[] =												//Translation matrix.
+	GLfloat translate[] =											//Translation matrix.
 		{1,0,0,0,
 		 0,1,0,0,
 		 0,0,1,0,
@@ -403,9 +404,9 @@ int main() {
 		}
 		
 		else if (pattern.substr(idx, 1).compare("F") == 0){			
-			currentPosition[0] += currentHeading[0]*.2;				//Changes the height of the tree, I like .2.
-			currentPosition[1] += currentHeading[1]*.2;
-			currentPosition[2] += currentHeading[2]*.2;
+			currentPosition[0] += currentHeading[0]*.4;				//Changes the height of the tree, I like .2.
+			currentPosition[1] += currentHeading[1]*.4;
+			currentPosition[2] += currentHeading[2]*.4;
 			currentPosition[3] += currentHeading[3];
 			
 			branchPoints[pointsCount] = currentPosition[0];			//Adds the currentPosition to the list of points.
@@ -530,10 +531,12 @@ int main() {
 				for (j = 0, k = 0; j < 16; j++){
 					new4x4[j] = k;
 				};
+				
 				GLfloat* newest4x4 = new float[16];
 				for (j = 0, k = 0; j < 16; j++){
 					newest4x4[j] = k;
 				};
+				
 				GLfloat* new4x1 = new float[4];
 				for (j = 0, k = 0; j < 4; j++){
 					new4x1[j] = k;
@@ -543,20 +546,21 @@ int main() {
 				dy = leafPoints[beginLeaf*3 + 1];												// Gets the y value of the end of the current branch.
 				dz = leafPoints[beginLeaf*3 + 2];*/												// Gets the z value of the end of the current branch.
 				
-				dx = 0.75 + beginLeaf * 0.5;
-				dy = 0; //-0.5 + beginLeaf * 0.5;
+				dx = -0.25 + beginLeaf * 0.5;
+				dy = -0.25 + beginLeaf * 0.5;
 				dz = 0;
 				
 				translate[12] = dx;																// Sets the dx value of translate to be the x-val of the current branch.
 				translate[13] = dy;																// Sets the dy value of translate to be the y-val of the current branch.
 				translate[14] = dz;																// Sets the dz value of translate to be the z-val of the current branch.
 				
-				multiplyAgain(scale, translate, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
-				multiplyAgain(rotateX, new4x4, newest4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
+				new4x4 = multiplyAgain(translate, scale, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
+				newest4x4 = multiplyAgain(rotateX, new4x4, newest4x4);
+				//newest4x4 = multiplyAgain(scale, new4x4, newest4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
 				
 				float currentLeafPoint[] = {points[i], points[i + 1], points[i + 2], 1};		// Gets the x, y, z values from points (leaf) to multiply by.
 				
-				multiply(newest4x4, currentLeafPoint, new4x1);									// Multiplies a 4x4 and a 4x1 matrix together and makes a new 4x1 matrix.
+				multiply(new4x4, currentLeafPoint, new4x1);										// Multiplies a 4x4 and a 4x1 matrix together and makes a new 4x1 matrix.
 				points[i + 0] = new4x1[0];														// Sets current points x-val to be the x-val of the new	4x1 matrix.	
 				points[i + 1] = new4x1[1];														// Sets current points y-val to be the y-val of the new	4x1 matrix.	
 				points[i + 2] = new4x1[2];														// Sets current points z-val to be the z-val of the new	4x1 matrix.	
