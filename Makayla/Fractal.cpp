@@ -285,9 +285,9 @@ int main() {
 	GLfloat dx;														//For leaf translation along the x-axis.
 	GLfloat dy;														//For leaf translation along the y-axis.
 	GLfloat dz;														//For leaf translation along the z-axis.
-	GLfloat sx = .0225;												//Scales the leaf.
-	GLfloat sy = .45;												//Scales the leaf.
-	GLfloat sz = .15;												//Scales the leaf.
+	GLfloat sx = .025;												//Scales the leaf.
+	GLfloat sy = .025;												//Scales the leaf.
+	GLfloat sz = .025;												//Scales the leaf.
 	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};			//Beginning current position of the tree.
 	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};			//Beginning current heading of the tree.
 	GLfloat rotateZ[] = 											//Rotation matrix for the z-axis.
@@ -373,9 +373,9 @@ int main() {
 			leafPoints[leafCount] = currentPosition[2];
 			leafCount++;	
 			
-			/*cout << "Position X " << currentPosition[0] << endl;
+			cout << "Position X " << currentPosition[0] << endl;
 			cout << "Position Y " << currentPosition[1] << endl;
-			cout << "Position Z " << currentPosition[2] << endl;*/
+			cout << "Position Z " << currentPosition[2] << endl;
 			
 			currentPosition[0] = PositionStack.top();				//Sets the current position back to the top of the stack.
 			PositionStack.pop();									//Pops the current position from the top of the stack.
@@ -472,29 +472,31 @@ int main() {
 	int leavesWanted = leafCount / 3;
 	
 	GLfloat* points = new GLfloat[leavesWanted*9*numFaces];
-	GLfloat* normals = new GLfloat[9*numFaces];
-	for (int i = 0; i < numFaces; i++){
-	    int idx1 = faces[3*i + 0];
-	    int idx2 = faces[3*i + 1];
-	    int idx3 = faces[3*i + 2];
-	    points[i*9 + 0] = verts[3*idx1+0];
-	    points[i*9 + 1] = verts[3*idx1+1];
-	    points[i*9 + 2] = verts[3*idx1+2];
-	    points[i*9 + 3] = verts[3*idx2+0];
-	    points[i*9 + 4] = verts[3*idx2+1];
-	    points[i*9 + 5] = verts[3*idx2+2];
-	    points[i*9 + 6] = verts[3*idx3+0];
-	    points[i*9 + 7] = verts[3*idx3+1];
-	    points[i*9 + 8] = verts[3*idx3+2];
-	    normals[i*9 + 0] = vertNormals[3*idx1+0];
-	    normals[i*9 + 1] = vertNormals[3*idx1+1];
-	    normals[i*9 + 2] = vertNormals[3*idx1+2];
-	    normals[i*9 + 3] = vertNormals[3*idx2+0];
-	    normals[i*9 + 4] = vertNormals[3*idx2+1];
-	    normals[i*9 + 5] = vertNormals[3*idx2+2];
-	    normals[i*9 + 6] = vertNormals[3*idx3+0];
-	    normals[i*9 + 7] = vertNormals[3*idx3+1];
-	    normals[i*9 + 8] = vertNormals[3*idx3+2];
+	GLfloat* normals = new GLfloat[leavesWanted*9*numFaces];
+	for (int w = 0; w < leavesWanted; w++){
+		for (int i = 0; i < numFaces; i++){
+			int idx1 = faces[3*i + 0];
+			int idx2 = faces[3*i + 1];
+			int idx3 = faces[3*i + 2];
+			points[i*9 + 0] = verts[3*idx1+0];
+			points[i*9 + 1] = verts[3*idx1+1];
+			points[i*9 + 2] = verts[3*idx1+2];
+			points[i*9 + 3] = verts[3*idx2+0];
+			points[i*9 + 4] = verts[3*idx2+1];
+			points[i*9 + 5] = verts[3*idx2+2];
+			points[i*9 + 6] = verts[3*idx3+0];
+			points[i*9 + 7] = verts[3*idx3+1];
+			points[i*9 + 8] = verts[3*idx3+2];
+			normals[i*9 + 0] = vertNormals[3*idx1+0];
+			normals[i*9 + 1] = vertNormals[3*idx1+1];
+			normals[i*9 + 2] = vertNormals[3*idx1+2];
+			normals[i*9 + 3] = vertNormals[3*idx2+0];
+			normals[i*9 + 4] = vertNormals[3*idx2+1];
+			normals[i*9 + 5] = vertNormals[3*idx2+2];
+			normals[i*9 + 6] = vertNormals[3*idx3+0];
+			normals[i*9 + 7] = vertNormals[3*idx3+1];
+			normals[i*9 + 8] = vertNormals[3*idx3+2];
+		}
 	}
 	int numPoints = 3*numFaces;
 	
@@ -542,13 +544,13 @@ int main() {
 					new4x1[j] = k;
 				};
 				
-				/*dx = leafPoints[beginLeaf*3 + 0];												// Gets the x value of the end of the current branch.	
+				dx = leafPoints[beginLeaf*3 + 0];												// Gets the x value of the end of the current branch.	
 				dy = leafPoints[beginLeaf*3 + 1];												// Gets the y value of the end of the current branch.
-				dz = leafPoints[beginLeaf*3 + 2];*/												// Gets the z value of the end of the current branch.
+				dz = leafPoints[beginLeaf*3 + 2];												// Gets the z value of the end of the current branch.
 				
-				dx = 0.125 + beginLeaf * 0.5;
-				dy = 0.25 + beginLeaf * 0.5;
-				dz = 0;
+				/*dx = 1;
+				dy = 1;
+				dz = 0;*/
 				
 				translate[12] = dx;																// Sets the dx value of translate to be the x-val of the current branch.
 				translate[13] = dy;																// Sets the dy value of translate to be the y-val of the current branch.
