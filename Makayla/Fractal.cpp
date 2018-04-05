@@ -285,9 +285,9 @@ int main() {
 	GLfloat dx;														//For leaf translation along the x-axis.
 	GLfloat dy;														//For leaf translation along the y-axis.
 	GLfloat dz;														//For leaf translation along the z-axis.
-	GLfloat sx = .025;												//Scales the leaf.
-	GLfloat sy = .025;												//Scales the leaf.
-	GLfloat sz = .025;												//Scales the leaf.
+	GLfloat sx = .095;//0101012;												//Scales the leaf.
+	GLfloat sy = .095;//0101012;												//Scales the leaf.
+	GLfloat sz = .095;//0101012;												//Scales the leaf.
 	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};			//Beginning current position of the tree.
 	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};			//Beginning current heading of the tree.
 	GLfloat rotateZ[] = 											//Rotation matrix for the z-axis.
@@ -473,32 +473,41 @@ int main() {
 	
 	GLfloat* points = new GLfloat[leavesWanted*9*numFaces];
 	GLfloat* normals = new GLfloat[leavesWanted*9*numFaces];
-	for (int w = 0; w < leavesWanted; w++){
+	//cout << "numFaces " << numFaces << endl;
+	//cout << leavesWanted*9*numFaces << " " << leavesWanted << endl;
+
+	for (int l = 0; l < leavesWanted; l++){
 		for (int i = 0; i < numFaces; i++){
 			int idx1 = faces[3*i + 0];
 			int idx2 = faces[3*i + 1];
 			int idx3 = faces[3*i + 2];
-			points[i*9 + 0] = verts[3*idx1+0];
-			points[i*9 + 1] = verts[3*idx1+1];
-			points[i*9 + 2] = verts[3*idx1+2];
-			points[i*9 + 3] = verts[3*idx2+0];
-			points[i*9 + 4] = verts[3*idx2+1];
-			points[i*9 + 5] = verts[3*idx2+2];
-			points[i*9 + 6] = verts[3*idx3+0];
-			points[i*9 + 7] = verts[3*idx3+1];
-			points[i*9 + 8] = verts[3*idx3+2];
-			normals[i*9 + 0] = vertNormals[3*idx1+0];
-			normals[i*9 + 1] = vertNormals[3*idx1+1];
-			normals[i*9 + 2] = vertNormals[3*idx1+2];
-			normals[i*9 + 3] = vertNormals[3*idx2+0];
-			normals[i*9 + 4] = vertNormals[3*idx2+1];
-			normals[i*9 + 5] = vertNormals[3*idx2+2];
-			normals[i*9 + 6] = vertNormals[3*idx3+0];
-			normals[i*9 + 7] = vertNormals[3*idx3+1];
-			normals[i*9 + 8] = vertNormals[3*idx3+2];
+			points[i*9 + 0 + l*29952] = verts[3*idx1+0];
+			points[i*9 + 1 + l*29952] = verts[3*idx1+1];
+			points[i*9 + 2 + l*29952] = verts[3*idx1+2];
+			points[i*9 + 3 + l*29952] = verts[3*idx2+0];
+			points[i*9 + 4 + l*29952] = verts[3*idx2+1];
+			points[i*9 + 5 + l*29952] = verts[3*idx2+2];
+			points[i*9 + 6 + l*29952] = verts[3*idx3+0];
+			points[i*9 + 7 + l*29952] = verts[3*idx3+1];
+			points[i*9 + 8 + l*29952] = verts[3*idx3+2];
+			normals[i*9 + 0 + l*29952] = vertNormals[3*idx1+0];
+			normals[i*9 + 1 + l*29952] = vertNormals[3*idx1+1];
+			normals[i*9 + 2 + l*29952] = vertNormals[3*idx1+2];
+			normals[i*9 + 3 + l*29952] = vertNormals[3*idx2+0];
+			normals[i*9 + 4 + l*29952] = vertNormals[3*idx2+1];
+			normals[i*9 + 5 + l*29952] = vertNormals[3*idx2+2];
+			normals[i*9 + 6 + l*29952] = vertNormals[3*idx3+0];
+			normals[i*9 + 7 + l*29952] = vertNormals[3*idx3+1];
+			normals[i*9 + 8 + l*29952] = vertNormals[3*idx3+2];
 		}
 	}
+	
+	cout << numFaces - 1 << endl;
+		
+
+	cout << "numFaces " << numFaces << endl;
 	int numPoints = 3*numFaces;
+	
 	
 	cout << leavesWanted*9*numFaces << endl;
 	
@@ -532,17 +541,17 @@ int main() {
 				GLfloat* new4x4 = new float[16];
 				for (j = 0, k = 0; j < 16; j++){
 					new4x4[j] = k;
-				};
+				}
 				
 				GLfloat* newest4x4 = new float[16];
 				for (j = 0, k = 0; j < 16; j++){
 					newest4x4[j] = k;
-				};
+				}
 				
 				GLfloat* new4x1 = new float[4];
 				for (j = 0, k = 0; j < 4; j++){
 					new4x1[j] = k;
-				};
+				}
 				
 				dx = leafPoints[beginLeaf*3 + 0];												// Gets the x value of the end of the current branch.	
 				dy = leafPoints[beginLeaf*3 + 1];												// Gets the y value of the end of the current branch.
@@ -557,8 +566,7 @@ int main() {
 				translate[14] = dz;																// Sets the dz value of translate to be the z-val of the current branch.
 				
 				new4x4 = multiplyAgain(translate, scale, new4x4);								// Multiplies two 4x4 matrices together and makes a new matrix.
-				newest4x4 = multiplyAgain(rotateX, new4x4, newest4x4);
-				//newest4x4 = multiplyAgain(scale, new4x4, newest4x4);							// Multiplies two 4x4 matrices together and makes a new matrix.
+				newest4x4 = multiplyAgain(rotateX, new4x4, newest4x4);							// Multiplies two 4x4 matrices together and makes a new matrix.
 				
 				float currentLeafPoint[] = {points[i], points[i + 1], points[i + 2], 1};		// Gets the x, y, z values from points (leaf) to multiply by.
 				
