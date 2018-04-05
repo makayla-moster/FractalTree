@@ -90,7 +90,7 @@ int countF(string pattern){
 }
 
 int countbracket(string pattern) {
-	int countBracket = 1;
+	int countBracket = 0;
 	for (int idx = 0; idx < pattern.length(); idx++){					// Loops through string pattern to find number of ']' within the pattern.
 		if (pattern.substr(idx, 1).compare("]") == 0){
 			countBracket ++;
@@ -112,13 +112,13 @@ int countLabel(string modelName, char label[]){
 		numLab++;
 	}
 	
-	cout << "Model has " << numLab << " " << label << "\n";
+	//cout << "Model has " << numLab << " " << label << "\n";
 	fclose(objFile);
 	return numLab;
 }
 
 void loadVertices(string modelName, GLfloat verts[]){	
-	cout << "Loading vertices\n";
+	//cout << "Loading vertices\n";
 	int numVert = 0;
 
 	FILE *objFile;
@@ -162,7 +162,7 @@ void loadVertices(string modelName, GLfloat verts[]){
 	float transX = 0.5*(maxX+minX);
 	float transY = 0.5*(maxY+minY);
 	float transZ = 0.5*(maxZ+minZ);
-	cout << "scales: " << scaleX << ", " << scaleY << ", " << scaleZ << endl;
+	//cout << "scales: " << scaleX << ", " << scaleY << ", " << scaleZ << endl;
 
 	for (int i = 0; i < numVert; i++){
 	    verts[3*i+0] = (verts[3*i+0] - transX)/scaleX;
@@ -171,7 +171,7 @@ void loadVertices(string modelName, GLfloat verts[]){
 	}
 
 	fclose(objFile);
-	cout << "Done loading vertices\n";
+	//cout << "Done loading vertices\n";
 }
 
 
@@ -228,7 +228,7 @@ void computeVertNormals(GLfloat normals[], GLfloat verts[], int numVerts, GLint 
 }
 
 void loadFaces(string modelName, GLint faces[]){    					//To read in Maya OBJ files.
-    cout << "Loading new faces\n";
+    //cout << "Loading new faces\n";
 
     FILE *objFile;
     objFile = fopen(modelName.c_str(),"r");
@@ -247,7 +247,7 @@ void loadFaces(string modelName, GLint faces[]){    					//To read in Maya OBJ f
     }
 
     fclose(objFile);
-    cout << "Done loading faces\n";
+    //cout << "Done loading faces\n";
 }
 
 
@@ -266,6 +266,7 @@ int main() {
 	int countBracket;												// Counts number of ']' in string.
 	
 	string pattern = generatePattern();								// Generates string pattern to make tree from.
+	cout << pattern << endl << endl;
 	count = countF(pattern);										// Function to count the number of 'F' in the string.
 	countBracket = countbracket(pattern);							// Function to count the number of ']' in the string.
 	int totalCount = count + countBracket;							//Total amount of points, including the backtracking points that are added for the lines.
@@ -285,9 +286,9 @@ int main() {
 	GLfloat dx;														//For leaf translation along the x-axis.
 	GLfloat dy;														//For leaf translation along the y-axis.
 	GLfloat dz;														//For leaf translation along the z-axis.
-	GLfloat sx = .095;//0101012;												//Scales the leaf.
-	GLfloat sy = .095;//0101012;												//Scales the leaf.
-	GLfloat sz = .095;//0101012;												//Scales the leaf.
+	GLfloat sx = .095;												//Scales the leaf.
+	GLfloat sy = .095;												//Scales the leaf.
+	GLfloat sz = .095;												//Scales the leaf.
 	GLfloat currentPosition[] = {0.0f, -0.25f, 0.0f, 1.0f};			//Beginning current position of the tree.
 	GLfloat currentHeading[] = {0.0f, 0.5f, 0.0f, 0.0f};			//Beginning current heading of the tree.
 	GLfloat rotateZ[] = 											//Rotation matrix for the z-axis.
@@ -330,25 +331,10 @@ int main() {
 		 0,0,1,0,
 		 0,0,0,1};
 
-
-	branchPoints[pointsCount] = currentPosition[0];					//These lines add the first set of points to the list of points.
-	pointsCount++;
-	branchPoints[pointsCount] = currentPosition[1];
-	pointsCount++;
-	branchPoints[pointsCount] = currentPosition[2];
-	pointsCount++;
-	
-	//float test4x4[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	/*cout << test4x4[0] << " " << test4x4[1] << " " << test4x4[2] << " " << test4x4[3]<< endl;
-	cout << test4x4[4] << " " << test4x4[5] << " " << test4x4[6] << " " << test4x4[7]<< endl;
-	cout << test4x4[8] << " " << test4x4[9] << " " << test4x4[10] << " " << test4x4[11]<< endl;
-	cout << test4x4[12] << " " << test4x4[13] << " " << test4x4[14] << " " << test4x4[15]<< endl << endl;
-	multiplyAgain(identity, identity, test4x4);
-	cout << test4x4[0] << " " << test4x4[1] << " " << test4x4[2] << " " << test4x4[3]<< endl;
-	cout << test4x4[4] << " " << test4x4[5] << " " << test4x4[6] << " " << test4x4[7]<< endl;
-	cout << test4x4[8] << " " << test4x4[9] << " " << test4x4[10] << " " << test4x4[11]<< endl;
-	cout << test4x4[12] << " " << test4x4[13] << " " << test4x4[14] << " " << test4x4[15]<< endl << endl;*/
-	
+	branchPoints[pointsCount + 0] = currentPosition[0];					//These lines add the first set of points to the list of points.
+	branchPoints[pointsCount + 1] = currentPosition[1];
+	branchPoints[pointsCount + 2] = currentPosition[2];
+	pointsCount += 3;
 	
 	
 	for (int idx = 0; idx < pattern.length(); idx++){				//Parser to parse through the Tree String pattern.
@@ -366,16 +352,15 @@ int main() {
 		
 		else if (pattern.substr(idx, 1).compare("]") == 0){
 			
-			leafPoints[leafCount] = currentPosition[0];				//Adds the point to the array which will be where I put my leaf OBJ.
-			leafCount++;
-			leafPoints[leafCount] = currentPosition[1];
-			leafCount++;
-			leafPoints[leafCount] = currentPosition[2];
-			leafCount++;	
+			leafPoints[leafCount + 0] = currentPosition[0];				//Adds the point to the array which will be where I put my leaf OBJ.
+			leafPoints[leafCount + 1] = currentPosition[1];
+			leafPoints[leafCount + 2] = currentPosition[2];
+			leafCount += 3;
 			
-			cout << "Position X " << currentPosition[0] << endl;
-			cout << "Position Y " << currentPosition[1] << endl;
-			cout << "Position Z " << currentPosition[2] << endl;
+			cout << endl;
+			cout << "Position X: " << currentPosition[0] << endl;
+			cout << "Position Y: " << currentPosition[1] << endl;
+			cout << "Position Z: " << currentPosition[2] << endl << endl;
 			
 			currentPosition[0] = PositionStack.top();				//Sets the current position back to the top of the stack.
 			PositionStack.pop();									//Pops the current position from the top of the stack.
@@ -385,13 +370,11 @@ int main() {
 			PositionStack.pop();
 			currentPosition[3] = PositionStack.top();
 			PositionStack.pop();
-
-			branchPoints[pointsCount] = currentPosition[0];			//Adds the currentPosition to the list of points.
-			pointsCount++;
-			branchPoints[pointsCount] = currentPosition[1];
-			pointsCount++;
-			branchPoints[pointsCount] = currentPosition[2];
-			pointsCount++;
+			
+			branchPoints[pointsCount + 0] = currentPosition[0];			//Adds the currentPosition to the list of points.
+			branchPoints[pointsCount + 1] = currentPosition[1];
+			branchPoints[pointsCount + 2] = currentPosition[2];
+			pointsCount += 3;
 		
 			currentHeading[0] = HeadingStack.top();					//Sets the currentHeading to the top of the HeadingStack.
 			HeadingStack.pop();										//Pops the currentHeading from the top of the stack.
@@ -409,20 +392,16 @@ int main() {
 			currentPosition[2] += currentHeading[2]*.2;
 			currentPosition[3] += currentHeading[3];
 			
-			branchPoints[pointsCount] = currentPosition[0];			//Adds the currentPosition to the list of points.
-			//cout << "Position X " << currentPosition[0] << endl;
-			pointsCount++;
-			branchPoints[pointsCount] = currentPosition[1];
-			//cout << "Position Y " << currentPosition[1] << endl;
-			pointsCount++;
-			branchPoints[pointsCount] = currentPosition[2];
-			//cout << "Position Z " << currentPosition[2] << endl;
-			pointsCount++;
+			branchPoints[pointsCount + 0] = currentPosition[0];			//Adds the currentPosition to the list of points.
+			branchPoints[pointsCount + 1] = currentPosition[1];
+			branchPoints[pointsCount + 2] = currentPosition[2];
+			pointsCount += 3;
+
 		}
 		
 		else if (pattern.substr(idx, 1).compare("+") == 0){
-			rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
-			//rotation = 45;
+			//rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
+			rotation = 45;
 			float rz =-  ((rotation * 3.14159) / 180);				//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
@@ -437,8 +416,8 @@ int main() {
 		}
 		
 		else if (pattern.substr(idx, 1).compare("-") == 0){
-			rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
-			//rotation = 45;
+			//rotation = rand() % 65 + 1;								//Chooses a random number to rotate by from 0 to 65.
+			rotation = 45;
 			float rz =+ ((rotation * 3.14159) / 180);				//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
@@ -470,11 +449,8 @@ int main() {
 	computeVertNormals(vertNormals, verts, numVert, faces, numFaces, faceNormals);	// Computes the number of vertex normals in OBJ.
 	
 	int leavesWanted = leafCount / 3;
-	
 	GLfloat* points = new GLfloat[leavesWanted*9*numFaces];
 	GLfloat* normals = new GLfloat[leavesWanted*9*numFaces];
-	//cout << "numFaces " << numFaces << endl;
-	//cout << leavesWanted*9*numFaces << " " << leavesWanted << endl;
 
 	for (int l = 0; l < leavesWanted; l++){
 		for (int i = 0; i < numFaces; i++){
@@ -501,15 +477,11 @@ int main() {
 			normals[i*9 + 8 + l*29952] = vertNormals[3*idx3+2];
 		}
 	}
-	
-	cout << numFaces - 1 << endl;
-		
-
-	cout << "numFaces " << numFaces << endl;
 	int numPoints = 3*numFaces;
 	
-	
-	cout << leavesWanted*9*numFaces << endl;
+	cout << "Leaf Count: " << leafCount << endl;
+	cout << "numFaces: " << numFaces << "   numFaces - 1: " << numFaces - 1 << endl;
+	cout << "Total leaf array num: " << leavesWanted*9*numFaces << endl;
 	
 	/*cout << leafCount << endl;
 	dx = leafPoints[3];
@@ -525,7 +497,7 @@ int main() {
 	
 	cout << points[0] << " " << points[1] << " " << points[2] << endl;*/
 	
-	cout << leafCount << " " << leafCount / 3 << endl << endl;
+	cout << "Total XYZ for leaf points: " << leafCount << " Total leaves: " << leafCount / 3 << endl << endl;
 	
 	for (int beginLeaf = 0; beginLeaf < leavesWanted; beginLeaf++) {							// Begins making multiple leaves.
 																	 							// Sets beginLeaf to 0 and counts up to the number of leaves needed.
@@ -534,8 +506,6 @@ int main() {
 		cout << beginLeaf << " " << endLeaf << endl;											// Creates a "leaf" from beginLeaf to endLeaf.
 		
 			for (int i = beginLeaf*9*numFaces; i < endLeaf*9*numFaces - 1; i += 3){				// Starts loop to multiply each point by my matrices.
-				
-				//cout << "BEFORE Points[i], [i+1], [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
 				int j;
 				int k;
 				GLfloat* new4x4 = new float[16];
@@ -574,8 +544,6 @@ int main() {
 				points[i + 0] = new4x1[0];														// Sets current points x-val to be the x-val of the new	4x1 matrix.	
 				points[i + 1] = new4x1[1];														// Sets current points y-val to be the y-val of the new	4x1 matrix.	
 				points[i + 2] = new4x1[2];														// Sets current points z-val to be the z-val of the new	4x1 matrix.	
-				
-				//cout << "AFTER Points[i], [i+1], [i+2] " << points[i] << " " << points[i+1] << " " << points[i+2] << endl;
 			}
 			
 		cout << dx << " " << dy << " " << dz << endl;
