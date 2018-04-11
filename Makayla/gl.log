@@ -1,7 +1,7 @@
-GL_LOG_FILE log. local time Fri Mar 24 09:53:43 2017
+GL_LOG_FILE log. local time Tue Apr 10 20:59:20 2018
 
 starting GLFW 3.2.1 Win32 WGL EGL MinGW DLLrenderer: Intel(R) HD Graphics 620
-version: 4.4.0 - Build 21.20.16.4574
+version: 4.5.0 - Build 22.20.16.4836
 creating shader from test_vs.glsl...
 shader compiled. index 1
 creating shader from test_fs_toon.glsl...
