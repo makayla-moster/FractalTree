@@ -61,11 +61,11 @@ void main () {
 	}
 	else if (new_dot_prod > 0.4){
 		// final colour
-		fragment_colour = vec4 (0.0, 1.0, 0.5, 1.0);
+		fragment_colour = vec4 (1.0, 0.0, 0.5, 1.0);
 	}
 	else {
 		// final colour
-		fragment_colour = vec4 (1.0, 0.0, 0.5, 1.0);
+		fragment_colour = vec4 (0.4, 1.0, 0.3, 1.0);
 	}
 	
 

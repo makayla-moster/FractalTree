@@ -1,6 +1,9 @@
+//g++ -w -o Makayla.exe gl_utils.cpp maths_funcs.cpp Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lglfw3 -lgdi32 -lopengl32 -L ./ -lglew32 -lglfw3
+
 //g++ -w -o Makayla.exe Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lOpenGL32 -L ./ -lglew32 -lglfw3
 
 #include "gl_utils.h"
+#include "maths_funcs.h"
 #include <GL/glew.h>		/* include GLEW and new version of GL on Windows */
 #include <GLFW/glfw3.h>     /* GLFW helper library */
 #include <math.h>
@@ -14,7 +17,8 @@
 #include <assert.h>
 #include <string>
 #include <string.h>
-#include <stdarg.h>   
+#include <stdarg.h> 
+#define GL_LOG_FILE "gl.log"  
 using namespace std;
 
 
@@ -251,7 +255,10 @@ void loadFaces(string modelName, GLint faces[]){    					//To read in Maya OBJ f
 }
 
 
-int main() {	
+int main() {
+	int g_gl_width = 640;
+	int g_gl_height = 480;
+	//GLFWwindow* g_window = NULL;
  
 	GLFWwindow *window = NULL;
 	const GLubyte *renderer;
@@ -280,8 +287,8 @@ int main() {
 	int leafCount = 0;												//Counts number of points needed to make a matrix for leaves.
 	
 	float rz = (90 * 3.14159) / 180;								//For the first rotation, so the trunk is 90 degrees from the bottom of the screen. Converts degrees to radians.
-	float rz2 = (30 * 3.14159) / 180;								//For rotation of leaf.
-	float rx = (90 * 3.14159) / 180;								//Rotates the leaf OBJ to be upright in radians.
+	float rz2 = 0; //(30 * 3.14159) / 180;								//For rotation of leaf.
+	float rx = -(90 * 3.14159) / 180;								//Rotates the leaf OBJ to be upright in radians.
 	float ry = (0 * 3.14159) / 180;									//Rotates the leaf along the y-axis.
 	GLfloat dx = 0;													//For leaf translation along the x-axis.
 	GLfloat dy = 0;													//For leaf translation along the y-axis.
@@ -316,7 +323,7 @@ int main() {
 		 0,1,0,0,
 		 sin(ry),0,cos(ry),0,
 		 0,0,0,1};
-	GLfloat translate[] =																		//Translation matrix.
+	GLfloat translateMat[] =																		//Translation matrix.
 		{1,0,0,0,
 		 0,1,0,0,
 		 0,0,1,0,
@@ -527,20 +534,28 @@ int main() {
 			dy = 1;
 			dz = 0;*/
 			
-			translate[12] = dx;																	// Sets the dx value of translate to be the x-val of the current branch.
-			translate[13] = dy;																	// Sets the dy value of translate to be the y-val of the current branch.
-			translate[14] = dz;																	// Sets the dz value of translate to be the z-val of the current branch.
+			translateMat[12] = dx;																	// Sets the dx value of translateMat to be the x-val of the current branch.
+			translateMat[13] = dy;																	// Sets the dy value of translateMat to be the y-val of the current branch.
+			translateMat[14] = dz;																	// Sets the dz value of translateMat to be the z-val of the current branch.
 			
-			sx = .089;
-			sy = .089;
-			sz = .089;
+			sx = .0389;
+			sy = .0389;
+			sz = .0389;
 			
 			scale[0] = sx;
 			scale[5] = sy;
 			scale[10] = sz;
 			
+			rz2 = (25 * 3.14159) / -180;
+			
+			rotateZ2[0] = cos(rz2);
+			rotateZ2[1] = sin(rz2);
+			rotateZ2[5] = -sin(rz2);
+			rotateZ2[6] = cos(rz2);
+			
 			new4x4 = multiplyAgain(rotateX, scale, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
-			newest4x4 = multiplyAgain(translate, new4x4, newest4x4);							// Multiplies two 4x4 matrices together and makes a new matrix.
+			newest4x4 = multiplyAgain(rotateZ2, new4x4, newest4x4);
+			newest4x4 = multiplyAgain(translateMat, newest4x4, newest4x4);						// Multiplies two 4x4 matrices together and makes a new matrix.
 			
 			float currentLeafPoint[] = {points[i], points[i + 1], points[i + 2], 1};			// Gets the x, y, z values from points (leaf) to multiply by.
 			
@@ -593,7 +608,7 @@ int main() {
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
 	/* GL shader program object [combined, to link] */
-	GLuint shader_programme2;
+	//GLuint shader_programme2;
 	//----------------------------------------------------------------------------
 
 	/* start GL context and O/S window using the GLFW helper library */
@@ -668,8 +683,8 @@ int main() {
 	glEnableVertexAttribArray (0);
 	glEnableVertexAttribArray (1);
 	
-	/*GLuint shader_programme2 = create_programme_from_files (
-		"test_vs.glsl", "test_fs_toon.glsl");
+	GLuint shader_programme2 = create_programme_from_files (
+		"test_vs.glsl", "test_fs.glsl");
 	
 	#define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
 	// input variables
@@ -710,7 +725,7 @@ int main() {
 	
 	glEnable (GL_CULL_FACE); // cull face
 	glCullFace (GL_BACK); // cull back face
-	glFrontFace (GL_CCW);*/ // GL_CCW for counter clock-wise 
+	glFrontFace (GL_CCW); // GL_CCW for counter clock-wise 
 	//----------------------------------------------------------------------------------------------------
 
 	/* here we copy the shader strings into GL shaders, and compile them. we
@@ -770,9 +785,9 @@ int main() {
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (Zrotation, 1, GL_FALSE, rotateZ2);
 		
-		GLfloat translation = glGetUniformLocation (shader_programme2, "translate");	//Imports translate matrix into vertex shader.
+		GLfloat translation = glGetUniformLocation (shader_programme2, "translateMat");	//Imports translateMat matrix into vertex shader.
 		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (translation, 1, GL_FALSE, translate);
+		glUniformMatrix4fv (translation, 1, GL_FALSE, translateMat);
 		
 		glBindVertexArray(vao2);
 		glDrawArrays(GL_TRIANGLES, 0, leavesWanted * numPoints);
