@@ -65,7 +65,7 @@ GLfloat* multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
 
 
 string generatePattern(){												//Generates a pattern to create a tree.
-    int numIts = 2; // Number of iterations
+    int numIts = 4; // Number of iterations
     string pattern = "F"; //"[X]";    // Using F for the pattern 
     
     for (int i = 0; i < numIts; i++){
@@ -277,7 +277,7 @@ int main() {
 	int countBracket;												// Counts number of ']' in string.
 	
 	string pattern = generatePattern();								// Generates string pattern to make tree from.
-	cout << pattern << endl << endl;
+	//cout << pattern << endl << endl;
 	count = countF(pattern);										// Function to count the number of 'F' in the string.
 	countBracket = countbracket(pattern);							// Function to count the number of ']' in the string.
 	int totalCount = count + countBracket;							//Total amount of points, including the backtracking points that are added for the lines.
@@ -364,10 +364,10 @@ int main() {
 			leafPoints[leafCount + 2] = currentPosition[2];
 			leafCount += 3;
 			
-			cout << endl;
+			/*cout << endl;
 			cout << "Position X: " << currentPosition[0] << endl;
 			cout << "Position Y: " << currentPosition[1] << endl;
-			cout << "Position Z: " << currentPosition[2] << endl << endl;
+			cout << "Position Z: " << currentPosition[2] << endl << endl;*/
 			
 			currentPosition[0] = PositionStack.top();											//Sets the current position back to the top of the stack.
 			PositionStack.pop();																//Pops the current position from the top of the stack.
@@ -485,31 +485,16 @@ int main() {
 	}
 	int numPoints = 3*numFaces;
 	
-	cout << "Leaf Count: " << leafCount << endl;
+	/*cout << "Leaf Count: " << leafCount << endl;
 	cout << "numFaces: " << numFaces << endl << "numFaces-1: " << numFaces - 1 << endl;
-	cout << "Total leaf array num: " << leavesWanted*9*numFaces << endl;
-	
-	/*cout << leafCount << endl;
-	dx = leafPoints[3];
-	cout << leafPoints[3] << endl;
-	dy = leafPoints[4];
-	cout << leafPoints[4] << endl;
-	dz = leafPoints[5]; 
-	cout << leafPoints[5] << endl;
-	
-	translate[12] = dx;
-	translate[13] = dy;
-	translate[14] = dz;
-	
-	cout << points[0] << " " << points[1] << " " << points[2] << endl;*/
-	
-	cout << "Total XYZ for leaf points: " << leafCount << endl << "Total leaves: " << leafCount / 3 << endl << endl;
+	cout << "Total leaf array num: " << leavesWanted*9*numFaces << endl;	
+	cout << "Total XYZ for leaf points: " << leafCount << endl << "Total leaves: " << leafCount / 3 << endl << endl;*/
 	
 	for (int beginLeaf = 0; beginLeaf < leavesWanted; beginLeaf++) {							// Begins making multiple leaves.
 																	 							// Sets beginLeaf to 0 and counts up to the number of leaves needed.
 		int endLeaf = beginLeaf + 1;															// Sets endLeaf to be one greater than beginLeaf.
-		cout << "leaf " << endLeaf << endl;
-		cout << beginLeaf << " " << endLeaf << endl;											// Creates a "leaf" from beginLeaf to endLeaf.
+		//cout << "leaf " << endLeaf << endl;
+		//cout << beginLeaf << " " << endLeaf << endl;											// Creates a "leaf" from beginLeaf to endLeaf.
 		
 		for (int i = beginLeaf*9*numFaces; i < endLeaf*9*numFaces - 1; i += 3){					// Starts loop to multiply each point by my matrices.
 			int j;
@@ -533,10 +518,6 @@ int main() {
 			dx = leafPoints[beginLeaf*3 + 0];													// Gets the x value of the end of the current branch.	
 			dy = leafPoints[beginLeaf*3 + 1];													// Gets the y value of the end of the current branch.
 			dz = leafPoints[beginLeaf*3 + 2];													// Gets the z value of the end of the current branch.
-			
-			/*dx = 1;
-			dy = 1;
-			dz = 0;*/
 			
 			translateMat[12] = dx;																	// Sets the dx value of translateMat to be the x-val of the current branch.
 			translateMat[13] = dy;																	// Sets the dy value of translateMat to be the y-val of the current branch.
@@ -569,8 +550,8 @@ int main() {
 			points[i + 2] = new4x1[2];															// Sets current points z-val to be the z-val of the new	4x1 matrix.	
 		}
 			
-		cout << dx << " " << dy << " " << dz << endl;
-		cout << beginLeaf*9*numFaces << " " << endLeaf*9*numFaces - 1 << endl << endl;
+		//cout << dx << " " << dy << " " << dz << endl;
+		//cout << beginLeaf*9*numFaces << " " << endLeaf*9*numFaces - 1 << endl << endl;
 	}
 	
 	
@@ -613,14 +594,14 @@ int main() {
 		"in vec3 position_eye, normal_eye;"
 		
 		// fixed point light properties
-		"vec3 light_position_world  = vec3 (-2.0, 1.0, 0.0);"
+		"vec3 light_position_world  = vec3 (2.0, 1.0, 0.0);"
 		"vec3 Ls = vec3 (1.0, 0.0, 0.0);" // white specular colour
 		"vec3 Ld = vec3 (0.7, 0.7, 0.7);" // dull white diffuse light colour
 		"vec3 La = vec3 (0.2, 0.2, 0.2);" // grey ambient colour
 		
 		// surface reflectance
 		"vec3 Ks = vec3 (1.0, 0.0, 0.0);" // fully reflect specular light
-		"vec3 Kd = vec3 (1.0, 0.5, 0.0);" // orange diffuse surface reflectance
+		"vec3 Kd = vec3 (0.0, 1.0, 0.0);" // orange diffuse surface reflectance
 		"vec3 Ka = vec3 (1.0, 1.0, 1.0);" // fully reflect ambient light
 		"float specular_exponent = 100.0;" // specular 'power'
 		
