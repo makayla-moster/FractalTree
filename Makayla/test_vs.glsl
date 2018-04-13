@@ -8,5 +8,5 @@ out vec3 position_eye, normal_eye;
 void main () {
 	position_eye = vertex_position;
 	normal_eye = vertex_normal;
-	gl_Position = rotateX * scale *  vec4 (position_eye, 1.0);
-}
+	gl_Position = rotateX * scale * vec4 (position_eye, 1.0);  //rotateX * scale *  
+} 

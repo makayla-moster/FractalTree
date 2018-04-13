@@ -2,6 +2,8 @@
 
 //g++ -w -o Makayla.exe Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lOpenGL32 -L ./ -lglew32 -lglfw3
 
+//g++ -w -o Makayla.exe gl_utils.cpp maths_funcs.cpp Fractal.cpp libglfw3dll.a libglew32.dll.a -I include -lglfw3 -lgdi32 -lopengl32
+
 #include "gl_utils.h"
 #include "maths_funcs.h"
 #include <GL/glew.h>		/* include GLEW and new version of GL on Windows */
@@ -255,12 +257,14 @@ void loadFaces(string modelName, GLint faces[]){    					//To read in Maya OBJ f
 }
 
 
+int g_gl_width = 640;
+int g_gl_height = 480;
+GLFWwindow* g_window = NULL;
+
 int main() {
-	int g_gl_width = 640;
-	int g_gl_height = 480;
-	//GLFWwindow* g_window = NULL;
+
  
-	GLFWwindow *window = NULL;
+	//GLFWwindow *window = NULL;
 	const GLubyte *renderer;
 	const GLubyte *version;
 	GLuint vao;
@@ -554,8 +558,8 @@ int main() {
 			rotateZ2[6] = cos(rz2);
 			
 			new4x4 = multiplyAgain(rotateX, scale, new4x4);										// Multiplies two 4x4 matrices together and makes a new matrix.
-			newest4x4 = multiplyAgain(rotateZ2, new4x4, newest4x4);
-			newest4x4 = multiplyAgain(translateMat, newest4x4, newest4x4);						// Multiplies two 4x4 matrices together and makes a new matrix.
+			//newest4x4 = multiplyAgain(rotateZ2, new4x4, newest4x4);
+			newest4x4 = multiplyAgain(translateMat, new4x4, newest4x4);							// Multiplies two 4x4 matrices together and makes a new matrix.
 			
 			float currentLeafPoint[] = {points[i], points[i + 1], points[i + 2], 1};			// Gets the x, y, z values from points (leaf) to multiply by.
 			
@@ -617,14 +621,14 @@ int main() {
 		return 1; 
 	}
 
-	window = glfwCreateWindow(640, 480, "Fractal Window", NULL, NULL);
-	if ( !window ) {
+	g_window = glfwCreateWindow(640, 480, "Fractal Window", NULL, NULL);
+	if ( !g_window ) {
 		fprintf( stderr, "ERROR: could not open window with GLFW3\n" );
 		glfwTerminate();
 		return 1;
 	}
 	
-	glfwMakeContextCurrent( window );
+	glfwMakeContextCurrent( g_window );
 	/* start GLEW extension handler */
 	glewExperimental = GL_TRUE;
 	glewInit();
@@ -686,7 +690,7 @@ int main() {
 	GLuint shader_programme2 = create_programme_from_files (
 		"test_vs.glsl", "test_fs.glsl");
 	
-	#define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
+	/*#define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
 	// input variables
 	float near = 0.1f; // clipping plane
 	float far = 100.0f; // clipping plane
@@ -713,19 +717,13 @@ int main() {
 	mat4 view_mat = R * T;
 	
 	// matrix for moving the triangle 
-	mat4 model_mat = identity_mat4 ();
+	mat4 model_mat = identity_mat4 ();*/
 	
 	glUseProgram (shader_programme2);
-	int view_mat_location = glGetUniformLocation (shader_programme2, "view_mat");
-	glUniformMatrix4fv (view_mat_location, 1, GL_FALSE, view_mat.m);
-	int proj_mat_location = glGetUniformLocation (shader_programme2, "projection_mat");
-	glUniformMatrix4fv (proj_mat_location, 1, GL_FALSE, proj_mat);
-	int model_mat_location = glGetUniformLocation (shader_programme2, "model_mat");
-	glUniformMatrix4fv (model_mat_location, 1, GL_FALSE, model_mat.m);
 	
-	glEnable (GL_CULL_FACE); // cull face
+	/*glEnable (GL_CULL_FACE); // cull face
 	glCullFace (GL_BACK); // cull back face
-	glFrontFace (GL_CCW); // GL_CCW for counter clock-wise 
+	glFrontFace (GL_CCW);*/ // GL_CCW for counter clock-wise 
 	//----------------------------------------------------------------------------------------------------
 
 	/* here we copy the shader strings into GL shaders, and compile them. we
@@ -764,7 +762,7 @@ int main() {
 			that we have a 'currently displayed' surface, and 'currently being drawn'
 			surface. hence the 'swap' idea. in a single-buffering system we would see
 			stuff being drawn one-after-the-other */
-	while ( !glfwWindowShouldClose( window ) ) {
+	while ( !glfwWindowShouldClose( g_window ) ) {
 		/* wipe the drawing surface clear */
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shader_programme);
@@ -796,7 +794,7 @@ int main() {
 		/* update other events like input handling */
 		glfwPollEvents();
 		/* put the stuff we've been drawing onto the display */
-		glfwSwapBuffers( window );
+		glfwSwapBuffers( g_window );
 	}
 
 	/* close GL context and any other GLFW resources */
