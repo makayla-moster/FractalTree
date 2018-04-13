@@ -31,6 +31,66 @@ using namespace std;
 
 #include <iostream>
 
+string generatePattern(){												//Generates a pattern to create a tree.
+    int numIts = 2; // Number of iterations
+    string pattern = "F"; //"[X]";    // Using F for the pattern 
+    
+    for (int i = 0; i < numIts; i++){
+        string newPattern = ""; 
+        for (int idx = 0; idx < pattern.length(); idx++){
+            if (pattern.substr(idx,1).compare("F") == 0) 
+			newPattern += "F[F][-F][+F]";   //"F[-F][F][+F]"
+            else if (pattern.substr(idx,1).compare("X") == 0) 
+                newPattern += "F-[[X]+X]+F[+FX]-X";
+            else{
+                newPattern += pattern.substr(idx,1);
+            }        
+        }
+        pattern = newPattern;
+    }
+    
+    return pattern;    
+}
+
+int countF(string pattern){
+	int count = 1;
+	for (int idx = 0; idx < pattern.length(); idx++){					// Loops through string pattern to find number of 'F' within the pattern.
+		if (pattern.substr(idx, 1).compare("F") == 0){
+			count ++;
+		}
+	}
+	return count;
+}
+
+int countbracket(string pattern) {
+	int countBracket = 0;
+	for (int idx = 0; idx < pattern.length(); idx++){					// Loops through string pattern to find number of ']' within the pattern.
+		if (pattern.substr(idx, 1).compare("]") == 0){
+			countBracket ++;
+		}
+	}	
+	
+	return countBracket;
+}
+
+void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this is to multiply a 4x4 and a 4x1 matrix together
+	result[0] = (matrix1[0]*matrix2[0]) + (matrix1[4]*matrix2[1]) + (matrix1[8]*matrix2[2]) + (matrix1[12]*matrix2[3]);
+	result[1] = (matrix1[1]*matrix2[0]) + (matrix1[5]*matrix2[1]) + (matrix1[9]*matrix2[2]) + (matrix1[13]*matrix2[3]);
+	result[2] = (matrix1[2]*matrix2[0]) + (matrix1[6]*matrix2[1]) + (matrix1[10]*matrix2[2]) + (matrix1[14]*matrix2[3]);
+	result[3] = (matrix1[3]*matrix2[0]) + (matrix1[7]*matrix2[1]) + (matrix1[11]*matrix2[2]) + (matrix1[15]*matrix2[3]);
+}
+
+GLfloat* multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
+	for (int i = 0; i < 16; i++){
+		for (int j = 0; j < 4; j++){
+			result[i] = result[i] + (matrix2[(i / 4) * 4 + j] * matrix1[(i % 4)+(4*j)]);
+			//cout << matrix2[(i / 4) * 4 + j]  * matrix1[(i % 4)+(4*j)] << endl;
+			//cout << i << " " << j << " " << result[i] << endl;
+		}
+	}
+	return result;
+}
+
 int countLabel(string modelName, char label[]){
 	int numLab = 0;
 	
@@ -322,7 +382,7 @@ int main () {
 	glEnableVertexAttribArray (1);
 	
 	GLuint shader_programme = create_programme_from_files (
-		"test_vs.glsl", "test_fs_toon.glsl");
+		"test_vs_2.glsl", "test_fs.glsl");
 	
 	/*#define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
 	// input variables
