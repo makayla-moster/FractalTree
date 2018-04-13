@@ -188,9 +188,9 @@ void computeFaceNormals(GLfloat faceNormals[], GLfloat verts[], GLint faces[], i
 		
 	//	cout << "avg norm" << nx << ", " << ny << ", " << nz << endl;
 		//cout << "mag: " << mag << endl;
-		faceNormals[3*i + 0] = nx/mag;
-		faceNormals[3*i + 1] = ny/mag;
-		faceNormals[3*i + 2] = nz/mag;
+		faceNormals[3*i + 0] = 0.0;//nx/mag;
+		faceNormals[3*i + 1] = 0.0;//ny/mag;
+		faceNormals[3*i + 2] = 1.0; //nz/mag;
 	}
 	
 }
@@ -222,9 +222,9 @@ void computeVertNormals(GLfloat normals[], GLfloat verts[], int numVerts, GLint 
 		avgY /= numF_vert;
 		avgZ /= numF_vert;
 		//cout << "avg norm" << avgX << ", " << avgY << ", " << avgZ << endl;
-		normals[i*3 + 0] = avgX;
-		normals[i*3 + 1] = avgY;
-		normals[i*3 + 2] = avgZ;
+		normals[i*3 + 0] = 0.0; //avgX;
+		normals[i*3 + 1] = 0.0; //avgY;
+		normals[i*3 + 2] = 1.0; //avgZ;
 	}
 }
 
@@ -382,7 +382,7 @@ int main () {
 	glEnableVertexAttribArray (1);
 	
 	GLuint shader_programme = create_programme_from_files (
-		"test_vs_2.glsl", "test_fs.glsl");
+		"test_vs.glsl", "test_fs.glsl");
 	
 	/*#define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
 	// input variables
@@ -420,10 +420,7 @@ int main () {
 	glUniformMatrix4fv (proj_mat_location, 1, GL_FALSE, proj_mat);
 	int model_mat_location = glGetUniformLocation (shader_programme, "model_mat");
 	glUniformMatrix4fv (model_mat_location, 1, GL_FALSE, model_mat.m);*/
-	int Xrotation = glGetUniformLocation (shader_programme, "rotateX");				//Imports rotateX matrix into vertex shader.
-	glUniformMatrix4fv (Xrotation, 1, GL_FALSE, rotateX);
-	int scaleLeaf = glGetUniformLocation (shader_programme, "scale");				//Imports scale matrix into vertex shader.
-	glUniformMatrix4fv (scaleLeaf, 1, GL_FALSE, scale);
+	
 	
 	/*glEnable (GL_CULL_FACE); // cull face
 	glCullFace (GL_BACK); // cull back face
@@ -438,6 +435,11 @@ int main () {
 		glViewport (0, 0, g_gl_width, g_gl_height);
 		
 		glUseProgram (shader_programme);
+		
+		int Xrotation = glGetUniformLocation (shader_programme, "rotateX");				//Imports rotateX matrix into vertex shader.
+		glUniformMatrix4fv (Xrotation, 1, GL_FALSE, rotateX);
+		int scaleLeaf = glGetUniformLocation (shader_programme, "scale");				//Imports scale matrix into vertex shader.
+		glUniformMatrix4fv (scaleLeaf, 1, GL_FALSE, scale);
 		
 		//model_mat.m[12] = sinf (current_seconds);
 		//glUniformMatrix4fv (model_mat_location, 1, GL_FALSE, model_mat.m);

@@ -597,22 +597,63 @@ int main() {
 	/* these are the strings of code for the shaders
 	the vertex shader positions each vertex point */
 	const char *vertex_shader2 = "#version 410\n"												// Vertex Shader for leaf.
-		"attribute vec3 vp;"
-		"uniform mat4;" 																		// Gets matrices inside vertex shader.
+	//	"attribute vec3 vp;"
+		"layout (location = 0) in vec3 vp;"
+		"layout (location = 1) in vec3 vertex_normal;"
+	//	"uniform mat4;" 																		// Gets matrices inside vertex shader.
+		"out vec3 position_eye, normal_eye;"
 		"void main () {"
-		"  gl_Position = vec4(vp, 1.0);"														// Multiplies vec4 by matrices.
+		"	position_eye = vp;"
+		"	normal_eye = vertex_normal, 1.0;"
+		"  gl_Position = vec4 (vp, 1.0);"														// Multiplies vec4 by matrices.
 		"}";
 	/* the fragment shader colours each fragment (pixel-sized area of the
 	triangle) */
 	const char *fragment_shader2 = "#version 410\n"												// Fragment Shader for leaf.
+		"in vec3 position_eye, normal_eye;"
+		
+		// fixed point light properties
+		"vec3 light_position_world  = vec3 (-2.0, 1.0, 0.0);"
+		"vec3 Ls = vec3 (1.0, 0.0, 0.0);" // white specular colour
+		"vec3 Ld = vec3 (0.7, 0.7, 0.7);" // dull white diffuse light colour
+		"vec3 La = vec3 (0.2, 0.2, 0.2);" // grey ambient colour
+		
+		// surface reflectance
+		"vec3 Ks = vec3 (1.0, 0.0, 0.0);" // fully reflect specular light
+		"vec3 Kd = vec3 (1.0, 0.5, 0.0);" // orange diffuse surface reflectance
+		"vec3 Ka = vec3 (1.0, 1.0, 1.0);" // fully reflect ambient light
+		"float specular_exponent = 100.0;" // specular 'power'
+		
 		"out vec4 frag_colour;"
 		"void main () {"
-		"  frag_colour = vec4 (0.1333, 0.545, 0.5, 1.0);"										// Makes leaf green.
+		// ambient intensity
+		"vec3 Ia = La * Ka;"
+		
+		// diffuse intensity
+		// raise light position to eye space
+		"vec3 light_position_eye = vec3 (vec4 (light_position_world, 1.0));"
+		"vec3 distance_to_light_eye = light_position_eye - position_eye;"
+		"vec3 direction_to_light_eye = normalize (distance_to_light_eye);"
+		"float dot_prod = dot (direction_to_light_eye, normal_eye);"
+		"dot_prod = max (dot_prod, 0.0);"
+		"vec3 Id = Ld * Kd * dot_prod;" // final diffuse intensity
+		
+		// specular intensity
+		"vec3 surface_to_viewer_eye = normalize (-position_eye);"
+		
+		// blinn
+		"vec3 half_way_eye = normalize (surface_to_viewer_eye + direction_to_light_eye);"
+		"float dot_prod_specular = max (dot (half_way_eye, normal_eye), 0.0);"
+		"float specular_factor = pow (dot_prod_specular, specular_exponent);"
+		
+		"vec3 Is = Ls * Ks * specular_factor;" // final specular intensity
+		
+		"  frag_colour = vec4 (Ia + Id + Is, 1.0);" //(0.1333, 0.545, 0.5, 1.0);"										// Makes leaf green.
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
 	/* GL shader program object [combined, to link] */
-	//GLuint shader_programme2;
+	GLuint shader_programme2;
 	//----------------------------------------------------------------------------
 
 	/* start GL context and O/S window using the GLFW helper library */
@@ -687,8 +728,8 @@ int main() {
 	glEnableVertexAttribArray (0);
 	glEnableVertexAttribArray (1);
 	
-	GLuint shader_programme2 = create_programme_from_files (
-		"test_vs.glsl", "test_fs.glsl");
+	/*GLuint shader_programme2 = create_programme_from_files (
+		"test_vs.glsl", "test_fs.glsl");*/
 	
 	/*#define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
 	// input variables
@@ -719,7 +760,7 @@ int main() {
 	// matrix for moving the triangle 
 	mat4 model_mat = identity_mat4 ();*/
 	
-	glUseProgram (shader_programme2);
+	//glUseProgram (shader_programme2);
 	
 	/*glEnable (GL_CULL_FACE); // cull face
 	glCullFace (GL_BACK); // cull back face
@@ -771,7 +812,7 @@ int main() {
 		/* draw points 0-3 from the currently bound VAO with current in-use shader */
 		glDrawArrays(GL_LINES, 0, totalCount);
 	//------------------------------------------------------------------------------------	Leaf stuff
-		int Xrotation = glGetUniformLocation (shader_programme2, "rotateX");			//Imports rotateX matrix into vertex shader.
+		/*int Xrotation = glGetUniformLocation (shader_programme2, "rotateX");			//Imports rotateX matrix into vertex shader.
 		glUseProgram(shader_programme2);
 		glUniformMatrix4fv (Xrotation, 1, GL_FALSE, rotateX);
 		
@@ -785,8 +826,8 @@ int main() {
 		
 		GLfloat translation = glGetUniformLocation (shader_programme2, "translateMat");	//Imports translateMat matrix into vertex shader.
 		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (translation, 1, GL_FALSE, translateMat);
-		
+		glUniformMatrix4fv (translation, 1, GL_FALSE, translateMat);*/
+		glUseProgram(shader_programme2);
 		glBindVertexArray(vao2);
 		glDrawArrays(GL_TRIANGLES, 0, leavesWanted * numPoints);
 	//------------------------------------------------------------------------------------
