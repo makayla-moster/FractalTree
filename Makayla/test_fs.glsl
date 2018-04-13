@@ -1,6 +1,7 @@
 #version 410
 
 in vec3 position_eye, normal_eye;
+vec3 anormal_eye = vec3 (0.0, 0.0, 1.0);
 
 uniform mat4 view_mat;
 
@@ -47,6 +48,6 @@ void main () {
 	vec3 Is = Ls * Ks * specular_factor; // final specular intensity
 	
 	// final colour
-	fragment_colour = vec4(Id, 1.0); //vec4 (Is + Id + Ia, 1.0);
+	fragment_colour = vec4 (Is + Id + Ia, 1.0);
 }
 
