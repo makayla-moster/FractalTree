@@ -1,6 +1,5 @@
-//g++ -w -o Makayla.exe gl_utils.cpp maths_funcs.cpp Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lglfw3 -lgdi32 -lopengl32 -L ./ -lglew32 -lglfw3
-
-//g++ -w -o Makayla.exe Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lOpenGL32 -L ./ -lglew32 -lglfw3
+//g++ -w -o Makayla.exe gl_utils.cpp maths_funcs.cpp Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lglfw3 -lgdi32 -lopengl32 -L ./ -lglew32 -lglfw3 //Not using
+//g++ -w -o Makayla.exe Fractal.cpp libglew32.dll.a libglfw3dll.a -I include -lOpenGL32 -L ./ -lglew32 -lglfw3 // Not using
 
 //g++ -w -o Makayla.exe gl_utils.cpp maths_funcs.cpp Fractal.cpp libglfw3dll.a libglew32.dll.a -I include -lglfw3 -lgdi32 -lopengl32
 
@@ -31,27 +30,6 @@ void multiply(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){   // this
 	result[3] = (matrix1[3]*matrix2[0]) + (matrix1[7]*matrix2[1]) + (matrix1[11]*matrix2[2]) + (matrix1[15]*matrix2[3]);
 }
 
-/*void multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){ // this is to multiply a 4x4 and a 4x4 matrix together
-	//GLfloat* result = new float[16];
-	result[0] = (matrix1[0]*matrix2[0])+(matrix1[4]*matrix2[1])+(matrix1[8]*matrix2[2])+(matrix1[12]*matrix2[3]);
-	result[4] = (matrix1[0]*matrix2[4])+(matrix1[4]*matrix2[5])+(matrix1[8]*matrix2[6])+(matrix1[12]*matrix2[7]);
-	result[8] = (matrix1[0]*matrix2[8])+(matrix1[4]*matrix2[9])+(matrix1[8]*matrix2[10])+(matrix1[12]*matrix2[11]);
-	result[12] = (matrix1[0]*matrix2[12])+(matrix1[4]*matrix2[13])+(matrix1[8]*matrix2[14])+(matrix1[12]*matrix2[15]);
-	result[1] = (matrix1[1]*matrix2[0])+(matrix1[5]*matrix2[1])+(matrix1[9]*matrix2[2])+(matrix1[13]*matrix2[3]);
-	result[5] = (matrix1[1]*matrix2[4])+(matrix1[5]*matrix2[5])+(matrix1[9]*matrix2[6])+(matrix1[13]*matrix2[7]);
-	result[9] = (matrix1[1]*matrix2[8])+(matrix1[5]*matrix2[9])+(matrix1[9]*matrix2[10])+(matrix1[13]*matrix2[11]);
-	result[13] = (matrix1[1]*matrix2[12])+(matrix1[5]*matrix2[13])+(matrix1[9]*matrix2[14])+(matrix1[13]*matrix2[15]);
-	result[2] = (matrix1[2]*matrix2[0])+(matrix1[6]*matrix2[1])+(matrix1[10]*matrix2[2])+(matrix1[14]*matrix2[3]);
-	result[6] = (matrix1[2]*matrix2[4])+(matrix1[6]*matrix2[5])+(matrix1[10]*matrix2[6])+(matrix1[14]*matrix2[7]);
-	result[10] = (matrix1[2]*matrix2[8])+(matrix1[6]*matrix2[9])+(matrix1[10]*matrix2[10])+(matrix1[14]*matrix2[11]);
-	result[14] = (matrix1[2]*matrix2[12])+(matrix1[6]*matrix2[13])+(matrix1[10]*matrix2[14])+(matrix1[14]*matrix2[15]);
-	result[3] = (matrix1[3]*matrix2[0])+(matrix1[7]*matrix2[1])+(matrix1[11]*matrix2[2])+(matrix1[15]*matrix2[3]);
-	result[7] = (matrix1[3]*matrix2[4])+(matrix1[7]*matrix2[5])+(matrix1[11]*matrix2[6])+(matrix1[15]*matrix2[7]);
-	result[11] = (matrix1[3]*matrix2[8])+(matrix1[7]*matrix2[9])+(matrix1[11]*matrix2[10])+(matrix1[15]*matrix2[11]);
-	result[15] = (matrix1[3]*matrix2[12])+(matrix1[7]*matrix2[13])+(matrix1[11]*matrix2[14])+(matrix1[15]*matrix2[15]);
-	//return result;
-}*/
-
 GLfloat* multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
 	for (int i = 0; i < 16; i++){
 		for (int j = 0; j < 4; j++){
@@ -62,7 +40,6 @@ GLfloat* multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
 	}
 	return result;
 }
-
 
 string generatePattern(){												//Generates a pattern to create a tree.
     int numIts = 4; // Number of iterations
@@ -118,13 +95,13 @@ int countLabel(string modelName, char label[]){
 		numLab++;
 	}
 	
-	//cout << "Model has " << numLab << " " << label << "\n";
+	cout << "Model has " << numLab << " " << label << "\n";
 	fclose(objFile);
 	return numLab;
 }
 
 void loadVertices(string modelName, GLfloat verts[]){	
-	//cout << "Loading vertices\n";
+	cout << "Loading vertices\n";
 	int numVert = 0;
 
 	FILE *objFile;
@@ -168,7 +145,7 @@ void loadVertices(string modelName, GLfloat verts[]){
 	float transX = 0.5*(maxX+minX);
 	float transY = 0.5*(maxY+minY);
 	float transZ = 0.5*(maxZ+minZ);
-	//cout << "scales: " << scaleX << ", " << scaleY << ", " << scaleZ << endl;
+	cout << "scales: " << scaleX << ", " << scaleY << ", " << scaleZ << endl;
 
 	for (int i = 0; i < numVert; i++){
 	    verts[3*i+0] = (verts[3*i+0] - transX)/scaleX;
@@ -177,7 +154,7 @@ void loadVertices(string modelName, GLfloat verts[]){
 	}
 
 	fclose(objFile);
-	//cout << "Done loading vertices\n";
+	cout << "Done loading vertices\n";
 }
 
 
@@ -234,7 +211,7 @@ void computeVertNormals(GLfloat normals[], GLfloat verts[], int numVerts, GLint 
 }
 
 void loadFaces(string modelName, GLint faces[]){    					//To read in Maya OBJ files.
-    //cout << "Loading new faces\n";
+    cout << "Loading new faces\n";
 
     FILE *objFile;
     objFile = fopen(modelName.c_str(),"r");
@@ -253,7 +230,7 @@ void loadFaces(string modelName, GLint faces[]){    					//To read in Maya OBJ f
     }
 
     fclose(objFile);
-    //cout << "Done loading faces\n";
+    cout << "Done loading faces\n";
 }
 
 
@@ -407,7 +384,7 @@ int main() {
 		
 		else if (pattern.substr(idx, 1).compare("+") == 0){
 			rotation = rand() % 65 + 1;															//Chooses a random number to rotate by from 0 to 65.
-			//rotation = 45;
+			//rotation = 25;
 			float rz =-  ((rotation * 3.14159) / 180);											//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
@@ -423,7 +400,7 @@ int main() {
 		
 		else if (pattern.substr(idx, 1).compare("-") == 0){
 			rotation = rand() % 65 + 1;															//Chooses a random number to rotate by from 0 to 65.
-			//rotation = 45;
+			//rotation = 25;
 			float rz =+ ((rotation * 3.14159) / 180);											//Converts degrees of the rotation to radians.
 			rotateZ[0] = cos(rz);
 			rotateZ[1] = sin(rz);
@@ -490,6 +467,7 @@ int main() {
 	cout << "Total leaf array num: " << leavesWanted*9*numFaces << endl;	
 	cout << "Total XYZ for leaf points: " << leafCount << endl << "Total leaves: " << leafCount / 3 << endl << endl;*/
 	
+	cout << "\nCreating " << leafCount/3 << " leaves" << endl;
 	for (int beginLeaf = 0; beginLeaf < leavesWanted; beginLeaf++) {							// Begins making multiple leaves.
 																	 							// Sets beginLeaf to 0 and counts up to the number of leaves needed.
 		int endLeaf = beginLeaf + 1;															// Sets endLeaf to be one greater than beginLeaf.
@@ -553,6 +531,7 @@ int main() {
 		//cout << dx << " " << dy << " " << dz << endl;
 		//cout << beginLeaf*9*numFaces << " " << endLeaf*9*numFaces - 1 << endl << endl;
 	}
+	cout << "Done creating " << leafCount / 3 << " leaves\n" << endl;
 	
 	
 	/* these are the strings of code for the shaders
@@ -601,7 +580,7 @@ int main() {
 		
 		// surface reflectance
 		"vec3 Ks = vec3 (1.0, 0.0, 0.0);" // fully reflect specular light
-		"vec3 Kd = vec3 (0.0, 1.0, 0.0);" // orange diffuse surface reflectance
+		"vec3 Kd = vec3 (0.0, 1.0, 0.0);" // green diffuse surface reflectance
 		"vec3 Ka = vec3 (1.0, 1.0, 1.0);" // fully reflect ambient light
 		"float specular_exponent = 100.0;" // specular 'power'
 		
@@ -709,43 +688,6 @@ int main() {
 	glEnableVertexAttribArray (0);
 	glEnableVertexAttribArray (1);
 	
-	/*GLuint shader_programme2 = create_programme_from_files (
-		"test_vs.glsl", "test_fs.glsl");*/
-	
-	/*#define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
-	// input variables
-	float near = 0.1f; // clipping plane
-	float far = 100.0f; // clipping plane
-	float fov = 67.0f * ONE_DEG_IN_RAD; // convert 67 degrees to radians
-	float aspect = (float)g_gl_width / (float)g_gl_height; // aspect ratio
-	// matrix components
-	float range = tan (fov * 0.5f) * near;
-	float Sx = (2.0f * near) / (range * aspect + range * aspect);
-	float Sy = near / range;
-	float Sz = -(far + near) / (far - near);
-	float Pz = -(2.0f * far * near) / (far - near);
-	GLfloat proj_mat[] = {
-		Sx, 0.0f, 0.0f, 0.0f,
-		0.0f, Sy, 0.0f, 0.0f,
-		0.0f, 0.0f, Sz, -1.0f,
-		0.0f, 0.0f, Pz, 0.0f
-	};
-	
-	//create VIEW MATRIX 
-	float cam_pos[] = {0.0f, 0.0f, 2.0f}; // don't start at zero, or we will be too close
-	float cam_yaw = 0.0f; // y-rotation in degrees
-	mat4 T = translate (identity_mat4 (), vec3 (-cam_pos[0], -cam_pos[1], -cam_pos[2]));
-	mat4 R = rotate_y_deg (identity_mat4 (), -cam_yaw);
-	mat4 view_mat = R * T;
-	
-	// matrix for moving the triangle 
-	mat4 model_mat = identity_mat4 ();*/
-	
-	//glUseProgram (shader_programme2);
-	
-	/*glEnable (GL_CULL_FACE); // cull face
-	glCullFace (GL_BACK); // cull back face
-	glFrontFace (GL_CCW);*/ // GL_CCW for counter clock-wise 
 	//----------------------------------------------------------------------------------------------------
 
 	/* here we copy the shader strings into GL shaders, and compile them. we
@@ -776,7 +718,6 @@ int main() {
 	glAttachShader(shader_programme2, vert_shader2);
 	glLinkProgram(shader_programme2);
 	//------------------------------------------------------------------------------------
-
 	/* this loop clears the drawing surface, then draws the geometry described
 			by the VAO onto the drawing surface. we 'poll events' to see if the window
 			was closed, etc. finally, we 'swap the buffers' which displays our drawing
@@ -793,21 +734,6 @@ int main() {
 		/* draw points 0-3 from the currently bound VAO with current in-use shader */
 		glDrawArrays(GL_LINES, 0, totalCount);
 	//------------------------------------------------------------------------------------	Leaf stuff
-		/*int Xrotation = glGetUniformLocation (shader_programme2, "rotateX");			//Imports rotateX matrix into vertex shader.
-		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (Xrotation, 1, GL_FALSE, rotateX);
-		
-		int scaleLeaf = glGetUniformLocation (shader_programme2, "scale");				//Imports scale matrix into vertex shader.
-		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (scaleLeaf, 1, GL_FALSE, scale);
-		
-		int Zrotation = glGetUniformLocation (shader_programme2, "rotateZ2");			//Imports rotateZ2 matrix into vertex shader.
-		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (Zrotation, 1, GL_FALSE, rotateZ2);
-		
-		GLfloat translation = glGetUniformLocation (shader_programme2, "translateMat");	//Imports translateMat matrix into vertex shader.
-		glUseProgram(shader_programme2);
-		glUniformMatrix4fv (translation, 1, GL_FALSE, translateMat);*/
 		glUseProgram(shader_programme2);
 		glBindVertexArray(vao2);
 		glDrawArrays(GL_TRIANGLES, 0, leavesWanted * numPoints);
