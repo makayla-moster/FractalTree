@@ -1,6 +1,6 @@
 //Maya ASCII 2017ff05 scene
 //Name: Leaf.ma
-//Last modified: Tue, Apr 10, 2018 08:57:52 PM
+//Last modified: Sat, Apr 14, 2018 07:19:55 PM
 //Codeset: 1252
 requires maya "2017ff05";
 requires "stereoCamera" "10.0";
@@ -93,20 +93,27 @@ createNode mesh -n "pPlaneShape1" -p "pPlane1";
 	setAttr ".covm[0]"  0 1 1;
 	setAttr ".cdvm[0]"  0 1 1;
 	setAttr ".dr" 1;
+createNode transform -n "ambientLight1";
+	rename -uid "9EDF6ED3-4C15-9653-8010-3CAB0CCA50DA";
+	setAttr ".t" -type "double3" 0 3.2911716359899046 0 ;
+createNode ambientLight -n "ambientLightShape1" -p "ambientLight1";
+	rename -uid "52D0467F-412F-392C-51DD-F58E4AA280CA";
+	setAttr -k off ".v";
+	setAttr ".urs" no;
 createNode lightLinker -s -n "lightLinker1";
-	rename -uid "DC23F711-45B2-9515-3575-CC909FFAE8DD";
+	rename -uid "200EFE50-4017-E223-F097-B7953C7B07A2";
 	setAttr -s 7 ".lnk";
 	setAttr -s 7 ".slnk";
 createNode shapeEditorManager -n "shapeEditorManager";
-	rename -uid "A1BF92A1-4318-F608-BAA5-90834249FF6A";
+	rename -uid "2F069AA7-4D13-DE9C-987C-9E8B8AC5CB33";
 createNode poseInterpolatorManager -n "poseInterpolatorManager";
-	rename -uid "EED5CB64-48F2-9AAA-75D6-12801F62A8B6";
+	rename -uid "F115927D-4B58-7E1C-35B2-CE93ADF92483";
 createNode displayLayerManager -n "layerManager";
-	rename -uid "D2F5978A-450E-04EA-D67A-00A114E89AE6";
+	rename -uid "234C44DB-435B-B8EA-5886-42A6B3F578CF";
 createNode displayLayer -n "defaultLayer";
 	rename -uid "5E75A9D2-4C43-7E09-B474-D9BCA661A382";
 createNode renderLayerManager -n "renderLayerManager";
-	rename -uid "A1EBF57C-4EBE-E41D-6D66-E1B52E7C5505";
+	rename -uid "1D167D0C-43A7-309E-7CFC-E397B62CCCA4";
 createNode renderLayer -n "defaultRenderLayer";
 	rename -uid "ABC5FCDE-4412-961E-E473-02BFA40F3F04";
 	setAttr ".g" yes;
@@ -743,12 +750,14 @@ select -ne :defaultShaderList1;
 select -ne :postProcessList1;
 	setAttr -s 2 ".p";
 select -ne :defaultRenderingList1;
+select -ne :lightList1;
 select -ne :initialShadingGroup;
 	setAttr ".ro" yes;
 select -ne :initialParticleSE;
 	setAttr ".ro" yes;
 select -ne :defaultResolution;
 	setAttr ".pa" 1;
+select -ne :defaultLightSet;
 select -ne :hardwareRenderGlobals;
 	setAttr ".ctrs" 256;
 	setAttr ".btrs" 512;
@@ -849,4 +858,6 @@ connectAttr "blinn3.msg" ":defaultShaderList1.s" -na;
 connectAttr "blinn4.msg" ":defaultShaderList1.s" -na;
 connectAttr "blinn5.msg" ":defaultShaderList1.s" -na;
 connectAttr "defaultRenderLayer.msg" ":defaultRenderingList1.r" -na;
+connectAttr "ambientLightShape1.ltd" ":lightList1.l" -na;
+connectAttr "ambientLight1.iog" ":defaultLightSet.dsm" -na;
 // End of Leaf.ma
