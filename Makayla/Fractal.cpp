@@ -42,7 +42,7 @@ GLfloat* multiplyAgain(GLfloat matrix1[], GLfloat matrix2[], GLfloat result[]){
 }
 
 string generatePattern(){												//Generates a pattern to create a tree.
-    int numIts = 4; // Number of iterations
+    int numIts = 1; // Number of iterations
     string pattern = "F"; //"[X]";    // Using F for the pattern 
     
     for (int i = 0; i < numIts; i++){
@@ -608,7 +608,7 @@ int main() {
 		
 		"vec3 Is = Ls * Ks * specular_factor;" // final specular intensity
 		
-		"  frag_colour = vec4 (Ia + Id + Is, 1.0);" //(0.1333, 0.545, 0.5, 1.0);"										// Makes leaf green.
+		"  frag_colour = vec4 (Ia + Id + Is, 1.0);" //vec4 (0.1333, 0.545, 0.5, 1.0);"
 		"}";
 	/* GL shader objects for vertex and fragment shader [components] */
 	GLuint vert_shader2, frag_shader2;
