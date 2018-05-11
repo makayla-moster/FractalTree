@@ -254,7 +254,7 @@ int main() {
 	int countBracket;												// Counts number of ']' in string.
 	
 	string pattern = generatePattern();								// Generates string pattern to make tree from.
-	//cout << pattern << endl << endl;
+	cout << pattern << endl << endl;
 	count = countF(pattern);										// Function to count the number of 'F' in the string.
 	countBracket = countbracket(pattern);							// Function to count the number of ']' in the string.
 	int totalCount = count + countBracket;							//Total amount of points, including the backtracking points that are added for the lines.
@@ -467,7 +467,7 @@ int main() {
 	cout << "Total leaf array num: " << leavesWanted*9*numFaces << endl;	
 	cout << "Total XYZ for leaf points: " << leafCount << endl << "Total leaves: " << leafCount / 3 << endl << endl;*/
 	
-	cout << "\nCreating " << leafCount/3 << " leaves" << endl;
+	cout << "\nCreating " << leafCount/3 << " leaves" << endl;									// Shows the user that it is creating leaves.
 	for (int beginLeaf = 0; beginLeaf < leavesWanted; beginLeaf++) {							// Begins making multiple leaves.
 																	 							// Sets beginLeaf to 0 and counts up to the number of leaves needed.
 		int endLeaf = beginLeaf + 1;															// Sets endLeaf to be one greater than beginLeaf.
@@ -531,7 +531,7 @@ int main() {
 		//cout << dx << " " << dy << " " << dz << endl;
 		//cout << beginLeaf*9*numFaces << " " << endLeaf*9*numFaces - 1 << endl << endl;
 	}
-	cout << "Done creating " << leafCount / 3 << " leaves\n" << endl;
+	cout << "Done creating " << leafCount / 3 << " leaves\n" << endl;							// Prints out the number of leaves that are being created.
 	
 	
 	/* these are the strings of code for the shaders
